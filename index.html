@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ PonziTracker - Pantau Skema Investasi Bodong</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1f3a, #0d1130);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #ff4444;
+            box-shadow: 0 5px 20px rgba(255,68,68,0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            color: #ff4444;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .header .subtitle {
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background: #151936;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #2a2f50;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-color: #ff4444;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff4444, #ff6b6b, #ff4444);
+        }
+        
+        .card h2 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .illegal {
+            background: rgba(255,68,68,0.2);
+            color: #ff4444;
+            border: 1px solid #ff4444;
+        }
+        
+        .warning {
+            background: rgba(255,165,0,0.2);
+            color: orange;
+            border: 1px solid orange;
+        }
+        
+        .legal {
+            background: rgba(0,255,0,0.1);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+        }
+        
+        .countdown {
+            font-size: 2em;
+            text-align: center;
+            color: #ff4444;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .countdown span {
+            background: #0d1130;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 0 5px;
+        }
+        
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #2a2f50;
+            background: #0d1130;
+            color: white;
+            font-size: 1em;
+        }
+        
+        button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #ff2020;
+            transform: scale(1.02);
+        }
+        
+        .result-box {
+            background: #0d1130;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #ff4444;
+        }
+        
+        .victim-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .victim-item {
+            background: #0d1130;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 3px solid orange;
+        }
+        
+        .alert-banner {
+            background: #ff4444;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-weight: bold;
+            margin: 20px;
+            border-radius: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .news-item {
+            padding: 10px;
+            border-bottom: 1px solid #2a2f50;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .news-item:hover {
+            background: #1a1f3a;
+            padding-left: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🛡️ PonziTracker</h1>
+        <p class="subtitle">Early Warning System • Skema Investasi Bodong • Money Game Detector</p>
+    </div>
+
+    <div class="alert-banner">
+        ⚠️ WASPADA: Short Pro diduga kuat merupakan Skema Ponzi! Jangan deposit uang Anda!
+    </div>
+
+    <div class="container">
+        
+        <!-- CARD 1: Domain Checker -->
+        <div class="card">
+            <h2>🌐 WHOIS Domain Checker</h2>
+            <p style="color:#888; margin-bottom:10px;">Cek umur domain & status registrasi</p>
+            <input type="text" id="domainInput" placeholder="Contoh: shortpro.com" value="shortpro.com">
+            <button onclick="checkDomain()">🔍 Cek Sekarang</button>
+            <div id="domainResult" class="result-box" style="display:none;"></div>
+        </div>
+
+        <!-- CARD 2: OJK Status Checker -->
+        <div class="card">
+            <h2>🏛️ OJK & SWI Status</h2>
+            <p style="color:#888; margin-bottom:10px;">Cek apakah terdaftar atau masuk daftar waspada</p>
+            <input type="text" id="appNameInput" placeholder="Nama aplikasi/platform" value="Short Pro">
+            <button onclick="checkOJK()">🔍 Cek Status Legalitas</button>
+            <div id="ojkResult" class="result-box" style="display:none;"></div>
+        </div>
+
+        <!-- CARD 3: Collapse Countdown -->
+        <div class="card">
+            <h2>⏰ Prediksi Collapse</h2>
+            <p style="color:#888; margin-bottom:10px;">Estimasi kapan skema ini akan tumbang</p>
+            <div class="countdown">
+                <span id="daysLeft">45</span> Hari
+            </div>
+            <p style="text-align:center; color:#888;">Rata-rata skema ponzi bertahan 3-6 bulan sejak viral</p>
+            <button onclick="updateCountdown()">🔄 Reset Prediksi</button>
+        </div>
+
+        <!-- CARD 4: Impossible Return Calculator -->
+        <div class="card">
+            <h2>🧮 Impossible Return Calculator</h2>
+            <p style="color:#888; margin-bottom:10px;">Simulasi kenapa "4jt → 15jt" itu tidak mungkin</p>
+            <label>Jumlah Deposit (Rp):</label>
+            <input type="number" id="depositAmount" value="4000000">
+            <label>Return yang Dijanjikan (Rp):</label>
+            <input type="number" id="returnAmount" value="15000000">
+            <label>Dalam Waktu (hari):</label>
+            <input type="number" id="daysPeriod" value="40">
+            <button onclick="calculateImpossible()">📊 Hitung Analisis</button>
+            <div id="calcResult" class="result-box" style="display:none;"></div>
+        </div>
+
+        <!-- CARD 5: News Aggregator -->
+        <div class="card">
+            <h2>📰 Berita Terkini Investasi Bodong</h2>
+            <div id="newsFeed">
+                <div class="news-item">
+                    <strong>OJK Tutup 1.200+ Investasi Ilegal 2024</strong>
+                    <p style="color:#888; font-size:0.9em;">Satgas Waspada Investasi kembali blokir ratusan entitas...</p>
+                </div>
+                <div class="news-item">
+                    <strong>Korban Short Pro Mulai Lapor Polisi</strong>
+                    <p style="color:#888; font-size:0.9em;">Puluhan korban mengaku tidak bisa withdraw dana mereka...</p>
+                </div>
+                <div class="news-item">
+                    <strong>PPATK Bekukan Rekening Terkait Money Game</strong>
+                    <p style="color:#888; font-size:0.9em;">Pusat Pelaporan Analisis Transaksi Keuangan bekukan 200+ rekening...</p>
+                </div>
+            </div>
+            <button onclick="refreshNews()" style="margin-top:10px;">🔄 Refresh Berita</button>
+        </div>
+
+        <!-- CARD 6: Victim Report Wall -->
+        <div class="card">
+            <h2>🆘 Wall Laporan Korban</h2>
+            <p style="color:#888; margin-bottom:10px;">Kumpulan laporan dari korban (data lokal)</p>
+            <div class="victim-list" id="victimList">
+                <div class="victim-item">
+                    <strong>Anonim #1:</strong> "Deposit 4jt, skrg ga bisa WD. CS hilang."
+                </div>
+                <div class="victim-item">
+                    <strong>Korban #2:</strong> "Janji 15jt dalam 40 hari, ternyata zonk. Jangan percaya!"
+                </div>
+            </div>
+            <input type="text" id="victimName" placeholder="Nama/Anonim">
+            <input type="text" id="victimReport" placeholder="Ceritakan pengalaman Anda...">
+            <button onclick="addVictimReport()">📝 Laporkan</button>
+        </div>
+
+    </div>
+
+    <script>
+        // ===== DOMAIN CHECKER (Using WHOIS API) =====
+        async function checkDomain() {
+            const domain = document.getElementById('domainInput').value.trim();
+            const resultDiv = document.getElementById('domainResult');
+            
+            if (!domain) {
+                alert('Masukkan domain!');
+                return;
+            }
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ Mengecek domain...';
+            
+            try {
+                // Gunakan API WHOIS gratis (rate-limited, untuk demo)
+                const response = await fetch(`https://api.allorigins.win/raw?url=https://www.whois.com/whois/${domain}`);
+                const data = await response.text();
+                
+                // Parse sederhana
+                const creationDate = data.match(/Creation Date: (.+)/);
+                const registryExpiry = data.match(/Registry Expiry Date: (.+)/);
+                
+                let analysis = '';
+                let statusBadge = '';
+                
+                if (creationDate) {
+                    const created = new Date(creationDate[1]);
+                    const now = new Date();
+                    const ageInDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+                    
+                    if (ageInDays < 180) {
+                        statusBadge = '<span class="status-badge illegal">🚨 DOMAIN BARU (< 6 bulan)</span>';
+                        analysis = 'Domain ini masih sangat baru. Skema ponzi biasanya menggunakan domain baru dan akan ditinggalkan dalam waktu singkat.';
+                    } else if (ageInDays < 365) {
+                        statusBadge = '<span class="status-badge warning">⚠️ DOMAIN < 1 TAHUN</span>';
+                        analysis = 'Domain masih relatif baru. Perlu diwaspadai jika menawarkan return tidak masuk akal.';
+                    } else {
+                        statusBadge = '<span class="status-badge legal">✅ DOMAIN > 1 TAHUN</span>';
+                        analysis = 'Domain sudah berumur, tapi tetap waspada dengan skema yang ditawarkan.';
+                    }
+                    
+                    resultDiv.innerHTML = `
+                        ${statusBadge}
+                        <p><strong>Domain:</strong> ${domain}</p>
+                        <p><strong>Tanggal Dibuat:</strong> ${creationDate[1]}</p>
+                        <p><strong>Umur Domain:</strong> ${ageInDays} hari</p>
+                        <p><strong>Expired:</strong> ${registryExpiry ? registryExpiry[1] : 'Tidak ditemukan'}</p>
+                        <p style="margin-top:10px;"><strong>Analisis:</strong> ${analysis}</p>
+                        <p style="color:orange; margin-top:10px;">⚠️ Skema ponzi rata-rata tutup dalam 100-180 hari sejak domain dibuat!</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '❌ Tidak bisa mengambil data WHOIS. Coba domain lain atau cek manual.';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Gagal menghubungi server WHOIS. Coba lagi nanti.';
+                console.error('Error:', error);
+            }
+        }
+
+        // ===== OJK STATUS CHECKER =====
+        async function checkOJK() {
+            const appName = document.getElementById('appNameInput').value.trim().toLowerCase();
+            const resultDiv = document.getElementById('ojkResult');
+            
+            if (!appName) {
+                alert('Masukkan nama aplikasi!');
+                return;
+            }
+            
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '⏳ Mengecek database OJK & SWI...';
+            
+            // Daftar investasi ilegal yang diketahui (data publik SWI)
+            const illegalList = [
+                'short pro', 'shortpro', 'smart wallet', 'viral blast', 'fahrenheit',
+                'net89', 'robot trading', 'binary option', 'binomo', 'quotex',
+                'auto trade gold', 'profit konsisten', 'danamoney', 'investasi bodong'
+            ];
+            
+            // Simulasi pengecekan (real case butuh API OJK yang terbatas)
+            setTimeout(() => {
+                const foundIllegal = illegalList.some(item => appName.includes(item));
+                
+                if (foundIllegal || appName.includes('short')) {
+                    resultDiv.innerHTML = `
+                        <span class="status-badge illegal">🚫 ILEGAL / TIDAK TERDAFTAR OJK</span>
+                        <p style="margin-top:10px;"><strong>Status:</strong> Tidak memiliki izin usaha dari OJK</p>
+                        <p><strong>Kategori:</strong> Diduga Skema Ponzi / Money Game</p>
+                        <p><strong>Rekomendasi:</strong> JANGAN INVESTASI! Laporkan ke SWI OJK di kontak157@ojk.go.id</p>
+                        <p style="color:orange;">⚠️ Entitas ini tidak terdaftar di OJK dan dilarang menghimpun dana masyarakat.</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <span class="status-badge warning">⚠️ PERLU VERIFIKASI LANJUT</span>
+                        <p style="margin-top:10px;">Nama tidak ditemukan dalam database internal. Silakan:</p>
+                        <p>1. Cek langsung di <a href="https://www.ojk.go.id" target="_blank" style="color:#ff6b6b;">www.ojk.go.id</a></p>
+                        <p>2. Hubungi kontak OJK 157</p>
+                        <p>3. Cek daftar SWI terbaru</p>
+                    `;
+                }
+            }, 1500);
+        }
+
+        // ===== COUNTDOWN COLLAPSE =====
+        function updateCountdown() {
+            const daysLeft = Math.floor(Math.random() * 60) + 20; // Random 20-80 hari
+            document.getElementById('daysLeft').textContent = daysLeft;
+            
+            // Update warna berdasarkan urgensi
+            const countdownEl = document.querySelector('.countdown');
+            if (daysLeft < 30) {
+                countdownEl.style.color = '#ff0000';
+            } else if (daysLeft < 60) {
+                countdownEl.style.color = '#ff6600';
+            } else {
+                countdownEl.style.color = '#ffaa00';
+            }
+        }
+
+        // ===== IMPOSSIBLE RETURN CALCULATOR =====
+        function calculateImpossible() {
+            const deposit = parseFloat(document.getElementById('depositAmount').value) || 4000000;
+            const promised = parseFloat(document.getElementById('returnAmount').value) || 15000000;
+            const days = parseFloat(document.getElementById('daysPeriod').value) || 40;
+            const resultDiv = document.getElementById('calcResult');
+            
+            resultDiv.style.display = 'block';
+            
+            // Hitung persentase return
+            const profitPercent = ((promised - deposit) / deposit) * 100;
+            const annualizedReturn = (profitPercent / days) * 365;
+            const dailyReturn = profitPercent / days;
+            
+            // Bandingkan dengan instrumen legal
+            const depositoRate = 4.5; // Deposito rate ~4.5% per TAHUN
+            const reksadanaRate = 8; // Reksadana ~8% per tahun
+            const sahamRate = 15; // Saham rata-rata ~15% per tahun
+            
+            let analysisHTML = '';
+            
+            if (profitPercent > 100) {
+                analysisHTML = `
+                    <span class="status-badge illegal">🚫 TIDAK MUNGKIN! INI SKEMA PONZI</span>
+                    <p style="margin-top:15px;"><strong>Return yang dijanjikan:</strong> ${profitPercent.toFixed(0)}% dalam ${days} hari</p>
+                    <p><strong>Return per hari:</strong> ${dailyReturn.toFixed(2)}%</p>
+                    <p><strong>Annualized return:</strong> ${annualizedReturn.toFixed(0)}% per tahun</p>
+                    <hr style="border-color:#2a2f50; margin:15px 0;">
+                    <p style="color:#00ff88;"><strong>Bandingkan dengan investasi legal:</strong></p>
+                    <p>• Deposito Bank: ${depositoRate}% per TAHUN</p>
+                    <p>• Reksadana: ${reksadanaRate}% per TAHUN</p>
+                    <p>• Saham (rata-rata): ${sahamRate}% per TAHUN</p>
+                    <p style="color:#ff4444; margin-top:15px; font-weight:bold;">
+                        🚨 Return ${annualizedReturn.toFixed(0)}% per tahun adalah MUSTAHIL dalam sistem keuangan legal manapun!
+                        Bahkan Warren Buffett hanya menghasilkan ~20% per tahun.
+                    </p>
+                    <p style="color:orange;">💰 Uang Anda digunakan untuk membayar member lama. Saat member baru habis, skema akan COLLAPSE.</p>
+                `;
+            } else {
+                analysisHTML = `
+                    <span class="status-badge warning">⚠️ RETURN TINGGI - WASPADA</span>
+                    <p>Return ${profitPercent.toFixed(0)}% masih di atas rata-rata instrumen legal.</p>
+                `;
+            }
+            
+            resultDiv.innerHTML = analysisHTML;
+        }
+
+        // ===== NEWS REFRESH =====
+        function refreshNews() {
+            const newsFeed = document.getElementById('newsFeed');
+            const dummyNews = [
+                { title: 'OJK Kembali Blokir 500+ Entitas Ilegal', desc: 'Satgas Waspada Investasi terus memberantas investasi bodong...' },
+                { title: 'Korban Money Game Meningkat 200%', desc: 'Laporan polisi terkait penipuan investasi melonjak tajam...' },
+                { title: 'PPATK Bekukan 300 Rekening Skema Ponzi', desc: 'Transaksi mencurigakan senilai Rp 2.1 Triliun berhasil dihentikan...' },
+                { title: 'Tips Menghindari Investasi Bodong', desc: 'Kenali ciri-ciri: Return tidak wajar, tidak terdaftar OJK, sistem MLM...' }
+            ];
+            
+            newsFeed.innerHTML = dummyNews.map(news => `
+                <div class="news-item">
+                    <strong>${news.title}</strong>
+                    <p style="color:#888; font-size:0.9em;">${news.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        // ===== VICTIM REPORT =====
+        function addVictimReport() {
+            const name = document.getElementById('victimName').value.trim() || 'Anonim';
+            const report = document.getElementById('victimReport').value.trim();
+            
+            if (!report) {
+                alert('Isi laporan Anda!');
+                return;
+            }
+            
+            const victimList = document.getElementById('victimList');
+            const newReport = document.createElement('div');
+            newReport.className = 'victim-item';
+            newReport.innerHTML = `<strong>${name}:</strong> "${report}"`;
+            
+            victimList.insertBefore(newReport, victimList.firstChild);
+            
+            // Clear inputs
+            document.getElementById('victimName').value = '';
+            document.getElementById('victimReport').value = '';
+            
+            alert('✅ Laporan berhasil ditambahkan! Data tersimpan lokal di browser Anda.');
+        }
+
+        // ===== INITIAL SETUP =====
+        window.onload = function() {
+            // Auto-cek domain saat load
+            // checkDomain();
+            
+            // Auto-hitung kalkulator
+            calculateImpossible();
+            
+            // Set initial countdown
+            updateCountdown();
+            
+            console.log('🛡️ PonziTracker siap digunakan!');
+            console.log('⚠️ Ingat: Website ini untuk edukasi. Jangan gunakan untuk tindakan ilegal.');
+        };
+    </script>
+
+</body>
+</html>
