@@ -1,1548 +1,1962 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Waspada Invest — Investigasi ShortPro</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface2: #1a1a26;
-    --border: #2a2a3d;
-    --red: #ff3b3b;
-    --red-dim: #3d1010;
-    --amber: #f59e0b;
-    --amber-dim: #2d2000;
-    --green: #10b981;
-    --green-dim: #062318;
-    --text: #e8e8f0;
-    --text-muted: #7070a0;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'Inter', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-  }
-
-  /* ── LOGIN SCREEN ── */
-  #login-screen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: radial-gradient(ellipse at 50% 0%, #1a0a0a 0%, #0a0a0f 60%);
-  }
-
-  .login-box {
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .login-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--red-dim);
-    border: 1px solid var(--red);
-    color: var(--red);
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    padding: 6px 12px;
-    border-radius: 4px;
-    margin-bottom: 24px;
-    text-transform: uppercase;
-  }
-
-  .login-badge::before {
-    content: '';
-    width: 7px; height: 7px;
-    background: var(--red);
-    border-radius: 50%;
-    animation: blink 1.4s infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
-
-  .login-title {
-    font-family: var(--mono);
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 8px;
-  }
-
-  .login-title span { color: var(--red); }
-
-  .login-subtitle {
-    color: var(--text-muted);
-    font-size: 14px;
-    margin-bottom: 36px;
-    line-height: 1.6;
-  }
-
-  .form-group {
-    margin-bottom: 16px;
-  }
-
-  .form-group label {
-    display: block;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .form-group input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 14px;
-    padding: 12px 16px;
-    border-radius: 6px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .form-group input:focus {
-    border-color: var(--red);
-  }
-
-  .login-btn {
-    width: 100%;
-    background: var(--red);
-    color: white;
-    border: none;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: opacity 0.2s;
-    text-transform: uppercase;
-  }
-
-  .login-btn:hover { opacity: 0.85; }
-
-  .login-error {
-    display: none;
-    background: var(--red-dim);
-    border: 1px solid var(--red);
-    color: var(--red);
-    font-size: 13px;
-    padding: 10px 14px;
-    border-radius: 6px;
-    margin-top: 12px;
-    font-family: var(--mono);
-  }
-
-  .login-hint {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--text-muted);
-    font-family: var(--mono);
-  }
-
-  /* ── DASHBOARD ── */
-  #dashboard { display: none; }
-
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .topbar-brand {
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .topbar-brand .dot {
-    width: 8px; height: 8px;
-    background: var(--red);
-    border-radius: 50%;
-    animation: blink 1.4s infinite;
-  }
-
-  .topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .topbar-user {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-family: var(--mono);
-  }
-
-  .logout-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: all 0.2s;
-  }
-
-  .logout-btn:hover {
-    border-color: var(--red);
-    color: var(--red);
-  }
-
-  .main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 32px 24px;
-  }
-
-  /* ALERT BANNER */
-  .alert-banner {
-    background: var(--red-dim);
-    border: 1px solid var(--red);
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin-bottom: 32px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .alert-icon { font-size: 20px; flex-shrink: 0; }
-
-  .alert-banner strong {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--red);
-    display: block;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .alert-banner p {
-    font-size: 13px;
-    color: #cc8080;
-    line-height: 1.5;
-  }
-
-  /* SECTION HEADER */
-  .section-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  /* STAT CARDS */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-  }
-
-  .stat-card.danger { border-color: var(--red); background: var(--red-dim); }
-  .stat-card.warning { border-color: var(--amber); background: var(--amber-dim); }
-  .stat-card.safe { border-color: #2a2a3d; }
-
-  .stat-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .stat-value {
-    font-family: var(--mono);
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .stat-card.danger .stat-value { color: var(--red); }
-  .stat-card.warning .stat-value { color: var(--amber); }
-
-  .stat-sub {
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-
-  /* TWO COLUMN */
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-
-  @media (max-width: 700px) {
-    .two-col { grid-template-columns: 1fr; }
-    .stat-grid { grid-template-columns: 1fr 1fr; }
-  }
-
-  /* CARD */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-
-  .card-title {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: var(--text);
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* RED FLAGS LIST */
-  .flag-list { list-style: none; }
-
-  .flag-item {
-    display: flex;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    align-items: flex-start;
-  }
-
-  .flag-item:last-child { border-bottom: none; }
-
-  .flag-icon {
-    width: 28px; height: 28px;
-    background: var(--red-dim);
-    border: 1px solid var(--red);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .flag-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 3px;
-  }
-
-  .flag-desc {
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  /* TIMELINE */
-  .timeline { position: relative; padding-left: 20px; }
-
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 6px;
-    top: 6px;
-    bottom: 6px;
-    width: 1px;
-    background: var(--border);
-  }
-
-  .timeline-item {
-    position: relative;
-    padding: 0 0 20px 20px;
-  }
-
-  .timeline-item:last-child { padding-bottom: 0; }
-
-  .timeline-dot {
-    position: absolute;
-    left: -14px;
-    top: 4px;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    border: 2px solid var(--bg);
-  }
-
-  .dot-red { background: var(--red); }
-  .dot-amber { background: var(--amber); }
-  .dot-green { background: var(--green); }
-  .dot-gray { background: var(--text-muted); }
-
-  .timeline-phase {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .phase-red { color: var(--red); }
-  .phase-amber { color: var(--amber); }
-  .phase-green { color: var(--green); }
-  .phase-gray { color: var(--text-muted); }
-
-  .timeline-text {
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  /* KALKULATOR */
-  .calc-box {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-
-  .calc-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    font-size: 13px;
-  }
-
-  .calc-row:not(:last-child) { border-bottom: 1px solid var(--border); }
-
-  .calc-key { color: var(--text-muted); }
-
-  .calc-val {
-    font-family: var(--mono);
-    font-weight: 600;
-  }
-
-  .calc-val.red { color: var(--red); }
-  .calc-val.amber { color: var(--amber); }
-  .calc-val.green { color: var(--green); }
-
-  input[type="range"] {
-    width: 100%;
-    accent-color: var(--red);
-    margin: 12px 0 4px;
-  }
-
-  .slider-labels {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-  }
-
-  /* CHECKLIST */
-  .checklist { list-style: none; }
-
-  .check-item {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-  }
-
-  .check-item:last-child { border-bottom: none; }
-
-  .check-box {
-    width: 18px; height: 18px;
-    border: 2px solid var(--border);
-    border-radius: 3px;
-    flex-shrink: 0;
-    margin-top: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
-
-  .check-item.checked .check-box {
-    background: var(--green);
-    border-color: var(--green);
-    color: white;
-    font-size: 11px;
-  }
-
-  .check-text {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.4;
-  }
-
-  .check-item.checked .check-text {
-    text-decoration: line-through;
-    color: var(--text-muted);
-  }
-
-  /* COMPARE TABLE */
-  .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-
-  .compare-table th {
-    text-align: left;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .compare-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-    line-height: 1.4;
-  }
-
-  .compare-table tr:last-child td { border-bottom: none; }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .badge-red { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
-  .badge-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber); }
-  .badge-green { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
-
-  /* REPORT LINKS */
-  .report-links { display: flex; flex-direction: column; gap: 10px; }
-
-  .report-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px 16px;
-    text-decoration: none;
-    transition: border-color 0.2s;
-  }
-
-  .report-link:hover { border-color: var(--red); }
-
-  .report-link-info { display: flex; flex-direction: column; gap: 3px; }
-
-  .report-link-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .report-link-desc {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-family: var(--mono);
-  }
-
-  .report-link-arrow { color: var(--text-muted); font-size: 16px; }
-
-  /* VERDICT BOX */
-  .verdict {
-    background: var(--red-dim);
-    border: 2px solid var(--red);
-    border-radius: 8px;
-    padding: 24px;
-    text-align: center;
-    margin-bottom: 32px;
-  }
-
-  .verdict-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--red);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .verdict-text {
-    font-family: var(--mono);
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--red);
-    margin-bottom: 8px;
-  }
-
-  .verdict-sub {
-    font-size: 13px;
-    color: #cc8080;
-    line-height: 1.5;
-  }
-
-  /* TABS */
-  .tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
-    overflow-x: auto;
-  }
-
-  .tab {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 12px 20px;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    white-space: nowrap;
-    transition: all 0.15s;
-  }
-
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--red); border-bottom-color: var(--red); }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  .progress-bar-wrap {
-    background: var(--border);
-    border-radius: 2px;
-    height: 6px;
-    overflow: hidden;
-    margin-top: 6px;
-  }
-
-  .progress-bar {
-    height: 100%;
-    border-radius: 2px;
-    background: var(--red);
-  }
-
-  /* FOOTER */
-  .footer {
-    text-align: center;
-    padding: 32px 24px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-muted);
-    border-top: 1px solid var(--border);
-    margin-top: 32px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>CBT Ujian Harian XI TJKT 2 - Dengan Fitur Anti Cheat Suara</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Sistem CBT Ujian Harian untuk kelas XI TJKT 2 dengan fitur anti cheat suara memalukan">
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- TAMBAHAN: Library untuk scan QR -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    
+    <style>
+        /* ========================================== */
+        /* CSS VARIABLES (WARNA GLOBAL)               */
+        /* ========================================== */
+        :root {
+            --blue: #4f7ffd;
+            --blue-dark: #3f6bff;
+            --danger: #ff4b4b;
+            --muted: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --dark-blue: #1e3c72;
+            --light-blue: #2a5298;
+            --purple: #8b5cf6;
+            --whatsapp: #25D366;
+            --twitter: #1DA1F2;
+        }
+
+        /* ========================================== */
+        /* RESET CSS - Menghapus margin/padding default */
+        /* ========================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ========================================== */
+        /* STYLE HALAMAN SPLASH (LOADING AWAL)        */
+        /* ========================================== */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--dark-blue), var(--light-blue));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .splash-screen.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .top-banner {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .splash-container {
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #00e0ff;
+            animation: loading 2s linear forwards;
+        }
+
+        @keyframes loading {
+            to { width: 100%; }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+
+        .splash-footer {
+            position: fixed;
+            bottom: 12px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        /* ========================================== */
+        /* STYLE SISTEM CBT (UTAMA)                   */
+        /* ========================================== */
+        .cbt-app {
+            display: none;
+        }
+
+        /* Layout dasar halaman login */
+        .center-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--blue), #5e8bff);
+            padding: 20px;
+        }
+
+        /* Card login */
+        .login-box {
+            width: 90%;
+            max-width: 380px;
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: var(--dark-blue);
+        }
+
+        /* Style input form */
+        .input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: none;
+            background: #f3f4f6;
+            margin-bottom: 12px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .input:focus {
+            outline: 2px solid var(--blue);
+            background: white;
+        }
+
+        /* Tombol utama */
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: var(--blue-dark);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(0.98);
+        }
+
+        /* Tombol kecil untuk aksi cepat */
+        .btn-small {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            margin: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .btn-small:hover {
+            opacity: 0.8;
+        }
+
+        /* Variasi warna tombol */
+        .btn-add { background: var(--blue); color: white; }
+        .btn-delete { background: #374151; color: white; }
+        .btn-export { background: var(--success); color: white; }
+        .btn-import { background: var(--purple); color: white; }
+        .btn-refresh { background: var(--warning); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* Teks kecil untuk keterangan */
+        .small {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Aplikasi utama setelah login */
+        .app {
+            display: none;
+            padding: 20px;
+            min-height: 100vh;
+            background: #f4f6fb;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header aplikasi */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* Card/kartu konten */
+        .card {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 6px 22px rgba(0,0,0,0.06);
+            margin-bottom: 18px;
+        }
+
+        .card h3 {
+            margin-bottom: 12px;
+            color: var(--dark-blue);
+        }
+
+        .card h4 {
+            margin-bottom: 10px;
+            color: var(--blue-dark);
+        }
+
+        hr {
+            margin: 16px 0;
+            border: none;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Tabel untuk menampilkan data */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .table th, .table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        .table th {
+            background: #eaf2ff;
+            font-weight: 600;
+        }
+
+        /* Card untuk mata pelajaran */
+        .subject-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .subject-card b {
+            font-size: 16px;
+        }
+
+        /* Badge/label status */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Modal (popup) */
+        .modal {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.45);
+            z-index: 1001;
+        }
+
+        .modal .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h3 {
+            margin-bottom: 16px;
+        }
+
+        /* Card sinkronisasi QR */
+        .sync-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        /* Style soal ujian */
+        .soal {
+            background: white;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            border: 1px solid #eef2ff;
+        }
+
+        .soal strong {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .options label:hover {
+            background: #f0f4ff;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .essay textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .essay textarea:focus {
+            outline: 2px solid var(--blue);
+        }
+
+        /* QR code container */
+        .qr-container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .qr-code {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .share-link {
+            word-break: break-all;
+            font-size: 12px;
+        }
+
+        /* ========================================== */
+        /* FITUR ANTI-CHEAT (EFEK VISUAL + SUARA)     */
+        /* ========================================== */
+        
+        /* Efek kedip merah saat cheat terdeteksi */
+        @keyframes shameFlash {
+            0% { background-color: #ffebee; }
+            50% { background-color: #ff4b4b; color: white; }
+            100% { background-color: #ffebee; }
+        }
+
+        .shame-effect {
+            animation: shameFlash 0.5s ease-in-out 3;
+            box-shadow: 0 0 0 3px red;
+        }
+
+        /* Floating shame message / pesan memalukan */
+        .shame-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #dc2626;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            z-index: 9999;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+            text-align: center;
+            font-size: 14px;
+            max-width: 90%;
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        /* ========================================== */
+        /* TAMBAHAN STYLE UNTUK KAMERA & QR SCAN      */
+        /* ========================================== */
+        .camera-preview {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 10px;
+            margin: 10px auto;
+            display: block;
+            background: #000;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .photo-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .photo-item img { width: 100%; border-radius: 5px; }
+        .photo-item .small { font-size: 10px; color: gray; }
+
+        .camera-warning {
+            background: #fee2e2;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #991b1b;
+        }
+
+        /* QR Scanner styling */
+        #qr-reader {
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+        
+        #qr-reader video {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .login-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-scan-qr {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        /* Responsive untuk HP */
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 20px;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .subject-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .btn-small {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-badge">⚠ Investigasi Aktif</div>
-    <h1 class="login-title">Waspada<span>Invest</span></h1>
-    <p class="login-subtitle">Dashboard investigasi berbasis data publik untuk mendeteksi skema investasi bodong di Indonesia. Masuk untuk melihat laporan lengkap.</p>
-
-    <div class="form-group">
-      <label>Username</label>
-      <input type="text" id="username" placeholder="masukkan username" autocomplete="off">
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="password" placeholder="masukkan password">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Masuk ke Dashboard</button>
-    <div class="login-error" id="login-error">Username atau password salah.</div>
-
-    <div class="login-hint" style="text-align:center;border-top:1px solid var(--border);margin-top:20px;padding-top:16px">
-      <span style="font-size:13px;color:var(--text-muted)">Belum punya akun? </span>
-      <a href="#" onclick="showRegister()" style="font-size:13px;color:var(--red);text-decoration:none;font-weight:600">Daftar sekarang →</a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════ REGISTER SCREEN ═══════════════ -->
-<div id="register-screen" style="display:none; min-height:100vh; align-items:center; justify-content:center; padding:24px; background:radial-gradient(ellipse at 50% 0%, #1a0a0a 0%, #0a0a0f 60%);">
-  <div class="login-box">
-    <div class="login-badge">📋 Pendaftaran Akun</div>
-    <h1 class="login-title">Daftar <span>Akun</span></h1>
-    <p class="login-subtitle">Daftarkan email aktif kamu. Verifikasi akan dikirim sebelum akun diaktifkan.</p>
-
-    <div id="reg-form">
-      <div class="form-group">
-        <label>Nama Lengkap</label>
-        <input type="text" id="reg-name" placeholder="nama lengkap kamu" autocomplete="off">
-      </div>
-      <div class="form-group">
-        <label>Email Aktif</label>
-        <input type="email" id="reg-email" placeholder="email@contoh.com" autocomplete="off">
-      </div>
-      <div class="form-group">
-        <label>Username</label>
-        <input type="text" id="reg-username" placeholder="buat username (tanpa spasi)" autocomplete="off"
-          oninput="this.value=this.value.replace(/\s/g,'')">
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="reg-password" placeholder="min. 8 karakter">
-      </div>
-      <div class="form-group">
-        <label>Konfirmasi Password</label>
-        <input type="password" id="reg-password2" placeholder="ulangi password">
-      </div>
-      <button class="login-btn" onclick="doRegister()" id="reg-btn">Daftar & Kirim Verifikasi Email</button>
-      <div class="login-error" id="reg-error" style="display:none"></div>
-    </div>
-
-    <!-- Pending verifikasi -->
-    <div id="reg-pending" style="display:none; text-align:center; padding:24px 0">
-      <div style="font-size:40px;margin-bottom:16px">📧</div>
-      <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--green);margin-bottom:8px">Email Verifikasi Terkirim!</div>
-      <div style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:20px">
-        Cek inbox email <strong id="reg-email-show" style="color:var(--text)"></strong><br>
-        Klik link verifikasi, lalu kembali ke sini untuk login.<br>
-        <span style="font-size:11px;color:var(--text-muted)">(Cek folder Spam jika tidak muncul)</span>
-      </div>
-      <div style="background:var(--amber-dim);border:1px solid var(--amber);border-radius:6px;padding:12px;font-size:12px;color:#c8a060;margin-bottom:20px">
-        ⚠ Akun kamu masih menunggu persetujuan admin. Setelah email diverifikasi, admin akan mengaktifkan akun kamu.
-      </div>
-      <button class="login-btn" onclick="showLogin()" style="background:transparent;border:1px solid var(--border);color:var(--text-muted)">← Kembali ke Login</button>
-    </div>
-
-    <div class="login-hint" style="text-align:center;border-top:1px solid var(--border);margin-top:20px;padding-top:16px">
-      <span style="font-size:13px;color:var(--text-muted)">Sudah punya akun? </span>
-      <a href="#" onclick="showLogin()" style="font-size:13px;color:var(--red);text-decoration:none;font-weight:600">← Masuk</a>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════ DASHBOARD ═══════════════ -->
-<div id="dashboard">
-  <div class="topbar">
-    <div class="topbar-brand">
-      <div class="dot"></div>
-      WaspадаInvest — ShortPro Monitor
-    </div>
-    <div class="topbar-right">
-      <span class="topbar-user" id="topbar-user"></span>
-      <button class="logout-btn" onclick="doLogout()">Keluar</button>
-    </div>
-  </div>
-
-  <div class="main">
-
-    <!-- ALERT -->
-    <div class="alert-banner">
-      <div class="alert-icon">🚨</div>
-      <div>
-        <strong>Peringatan Investasi Bodong</strong>
-        <p>ShortPro TV menawarkan imbal hasil hingga <strong id="alert-return" style="color:var(--red)">375%</strong> dalam 40 hari — sesuatu yang tidak mungkin dari bisnis konten digital manapun. Sesuaikan deposit di tab <em>Kalkulator Return</em> untuk lihat angka spesifik kamu.</p>
-      </div>
-    </div>
-
-    <!-- TABS -->
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('overview')">Overview</button>
-      <button class="tab" onclick="switchTab('kalkulator')">Kalkulator Return</button>
-      <button class="tab" onclick="switchTab('perbandingan')">Kasus Serupa</button>
-      <button class="tab" onclick="switchTab('laporan')">Cara Lapor</button>
-    </div>
-
-    <!-- ── TAB: OVERVIEW ── -->
-    <div class="tab-content active" id="tab-overview">
-
-      <!-- VERDICT -->
-      <div class="verdict">
-        <div class="verdict-label">Hasil Analisis</div>
-        <div class="verdict-text">⚠ INDIKASI SKEMA PONZI TINGGI</div>
-        <div class="verdict-sub">ShortPro tidak terdaftar di OJK sebagai platform investasi. Klaim return <span id="verdict-return">375%</span>/40 hari tidak memiliki basis bisnis riil yang dapat diverifikasi. → <a href="#" onclick="switchTab('kalkulator');return false;" style="color:var(--amber)">Hitung deposit kamu di tab Kalkulator</a></div>
-      </div>
-
-      <!-- STAT CARDS -->
-      <div class="section-label">Angka Kunci</div>
-      <div class="stat-grid">
-        <div class="stat-card danger">
-          <div class="stat-label">Klaim Return</div>
-          <div class="stat-value" id="stat-return">375%</div>
-          <div class="stat-sub">dalam 40 hari · <a href="#" onclick="switchTab('kalkulator');return false;" style="color:var(--red);font-size:11px">ubah nominal →</a></div>
+    <!-- ========================================== -->
+    <!-- HALAMAN SPLASH (LOADING AWAL)              -->
+    <!-- ========================================== -->
+    <div id="splashScreen" class="splash-screen">
+        <div class="top-banner">
+            Web builder @Raditya pradana &nbsp; | &nbsp; ウェブビルダー @Raditya pradana
         </div>
-        <div class="stat-card danger">
-          <div class="stat-label">Return / Tahun</div>
-          <div class="stat-value" id="stat-annual">3.400%</div>
-          <div class="stat-sub">vs SBI 6% per tahun</div>
-        </div>
-        <div class="stat-card warning">
-          <div class="stat-label">Status OJK</div>
-          <div class="stat-value">—</div>
-          <div class="stat-sub">Tidak terdaftar</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Izin Usaha</div>
-          <div class="stat-value" style="font-size:18px; color:var(--amber)">PT NID</div>
-          <div class="stat-sub">Bukan izin investasi</div>
-        </div>
-      </div>
-
-      <!-- RED FLAGS & TIMELINE -->
-      <div class="two-col">
-        <div>
-          <div class="section-label">Red Flags Terdeteksi</div>
-          <div class="card">
-            <ul class="flag-list">
-              <li class="flag-item">
-                <div class="flag-icon">💰</div>
-                <div>
-                  <div class="flag-title">Return tidak realistis</div>
-                  <div class="flag-desc">Klaim return hingga <strong id="flag-return-pct" style="color:var(--red)">375%</strong> dalam 40 hari. Tidak ada bisnis konten digital yang mampu menghasilkan ini secara konsisten.</div>
-                </div>
-              </li>
-              <li class="flag-item">
-                <div class="flag-icon">👥</div>
-                <div>
-                  <div class="flag-title">Sistem referral berlapis</div>
-                  <div class="flag-desc">Komisi rekrutmen multi-level adalah ciri khas skema Ponzi/MLM ilegal.</div>
-                </div>
-              </li>
-              <li class="flag-item">
-                <div class="flag-icon">🔒</div>
-                <div>
-                  <div class="flag-title">Biaya aktivasi & upgrade</div>
-                  <div class="flag-desc">Wajib bayar untuk akses fitur profit. Uang masuk = bahan bakar Ponzi.</div>
-                </div>
-              </li>
-              <li class="flag-item">
-                <div class="flag-icon">🌐</div>
-                <div>
-                  <div class="flag-title">Domain ganda</div>
-                  <div class="flag-desc">shortpro.app & shortpro.co.id. Platform legit hanya punya satu domain utama.</div>
-                </div>
-              </li>
-              <li class="flag-item">
-                <div class="flag-icon">📋</div>
-                <div>
-                  <div class="flag-title">Tidak terdaftar OJK</div>
-                  <div class="flag-desc">Menawarkan "investasi" tanpa izin OJK/Bappebti = aktivitas ilegal di Indonesia.</div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div>
-          <div class="section-label">Prediksi Fase Collapse</div>
-          <div class="card">
-            <div class="timeline">
-              <div class="timeline-item">
-                <div class="timeline-dot dot-green"></div>
-                <div class="timeline-phase phase-green">Fase 1 — Honeymoon</div>
-                <div class="timeline-text">Semua orang bisa withdraw lancar. Testimoni positif tersebar. Rekrutmen masif. <em>(Mungkin sedang di sini)</em></div>
-              </div>
-              <div class="timeline-item">
-                <div class="timeline-dot dot-amber"></div>
-                <div class="timeline-phase phase-amber">Fase 2 — Tekanan</div>
-                <div class="timeline-text">Withdraw mulai dipersulit. Syarat tambahan muncul (upgrade lagi, minimum WD naik, "verifikasi"). Server lambat.</div>
-              </div>
-              <div class="timeline-item">
-                <div class="timeline-dot dot-red"></div>
-                <div class="timeline-phase phase-red">Fase 3 — Collapse</div>
-                <div class="timeline-text">Withdraw diblokir total. Admin tidak responsif. Aplikasi tiba-tiba down. Kantor kosong.</div>
-              </div>
-              <div class="timeline-item">
-                <div class="timeline-dot dot-gray"></div>
-                <div class="timeline-phase phase-gray">Preseden — VTube 2021</div>
-                <div class="timeline-text">Pola identik: nonton video → reward → collapse setelah rekrutmen berhenti. Ribuan korban, uang hilang.</div>
-              </div>
+        <div class="splash-container">
+            <h1 id="splashTitle">Welcome to the daily exam XI TJKT 2</h1>
+            <p id="splashDesc">Computer based examination system with anti-cheat audio</p>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
             </div>
-          </div>
+            <div class="loading-text">Memuat sistem ujian...</div>
+        </div>
+        <div class="splash-footer">
+            Ujian kelas XI TJKT 2 © 2026<br>
+            Developed by <strong>Raditya XI TJKT2</strong>
+        </div>
+    </div>
 
-          <div class="section-label" style="margin-top:16px">Tanda Bahaya Sekarang</div>
-          <div class="card" style="padding:16px">
-            <ul class="checklist" id="checklist">
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Withdraw sudah dipersulit / ada syarat baru</div>
-              </li>
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Admin lambat/tidak respon di grup</div>
-              </li>
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Ada tawaran "upgrade paket" untuk bisa tarik uang</div>
-              </li>
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Server sering down atau lambat</div>
-              </li>
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Minimum withdraw tiba-tiba naik</div>
-              </li>
-            </ul>
-            <div style="margin-top:12px; font-size:12px; color:var(--text-muted)">
-              Centang yang sudah terjadi. Makin banyak → makin dekat collapse.
+    <!-- ========================================== -->
+    <!-- SISTEM CBT (UTAMA)                         -->
+    <!-- ========================================== -->
+    <div id="cbtApp" class="cbt-app">
+        
+        <!-- HALAMAN LOGIN -->
+        <div id="loginScreen" class="center-screen">
+            <div class="login-box">
+                <h2>📚 CBT Ujian Online</h2>
+                
+                <!-- Pilihan role: Guru atau Murid -->
+                <select id="roleSelect" class="input">
+                    <option value="murid">👨‍🎓 Login Sebagai Murid</option>
+                    <option value="guru">👨‍🏫 Login Sebagai Guru</option>
+                </select>
+                
+                <!-- Input username -->
+                <input id="loginUser" class="input" placeholder="Username" autocomplete="off">
+                
+                <!-- Input password -->
+                <input id="loginPass" class="input" type="password" placeholder="Password">
+                
+                <!-- Tombol login -->
+                <button class="btn" onclick="performLogin()">MASUK</button>
+                
+                <!-- ========== TAMBAHAN: TOMBOL SCAN QR LOGIN ========== -->
+                <div class="login-options">
+                    <button class="btn btn-scan-qr" onclick="openQRScanner()">📷 Scan QR Login</button>
+                </div>
+                <!-- ==================================================== -->
+                
+                <!-- Petunjuk login default -->
+                <div class="small" style="margin-top:10px">
+                    <strong>🔐 Petunjuk Login:</strong><br>
+                    Guru: username <code>guru</code> | password <code>admin</code><br>
+                    Siswa: username <code>siswa1</code> | password <code>password</code>
+                </div>
             </div>
-            <div id="danger-score" style="margin-top:10px; font-family:var(--mono); font-size:13px; color:var(--red); display:none"></div>
-          </div>
-        </div>
-      </div>
-    </div><!-- end tab-overview -->
-
-    <!-- ── TAB: KALKULATOR ── -->
-    <div class="tab-content" id="tab-kalkulator">
-      <div class="section-label">Kalkulator Expose Return Tidak Realistis</div>
-
-      <div class="card">
-        <div class="card-title">🧮 Masukkan Data Deposit Lo</div>
-
-        <label style="font-family:var(--mono);font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-          <span>Nominal Deposit</span>
-          <span style="display:flex;align-items:center;gap:6px">
-            <span style="color:var(--text-muted);font-size:11px">Rp</span>
-            <input id="deposit-input" type="text" inputmode="numeric"
-              style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:13px;padding:4px 10px;border-radius:4px;width:140px;outline:none;text-align:right"
-              value="1.000.000"
-              oninput="syncFromInput(this)"
-              onfocus="this.style.borderColor='var(--red)'; this.value=this.value.replace(/\./g,'')"
-              onblur="this.style.borderColor='var(--border)'; formatDepositInput(this)">
-          </span>
-        </label>
-        <input type="range" min="100000" max="100000000" step="100000" value="1000000"
-          oninput="syncFromSlider(this.value)" id="deposit-slider">
-        <div class="slider-labels">
-          <span>Rp 100rb</span>
-          <span>Rp 100jt</span>
         </div>
 
-        <div class="calc-box">
-          <div class="calc-row">
-            <span class="calc-key">Modal deposit lo</span>
-            <span class="calc-val" id="c-modal">Rp 1.000.000</span>
-          </div>
-          <div class="calc-row">
-            <span class="calc-key">Klaim profit <span id="c-pct-label">(375% / 40 hari)</span></span>
-            <span class="calc-val green" id="c-profit">+ Rp 3.750.000</span>
-          </div>
-          <div class="calc-row">
-            <span class="calc-key">Total yang dijanjikan</span>
-            <span class="calc-val amber" id="c-total">Rp 4.750.000</span>
-          </div>
-          <div class="calc-row">
-            <span class="calc-key">Return tahunan setara</span>
-            <span class="calc-val red" id="c-annual">~3.400% / tahun</span>
-          </div>
-          <div class="calc-row">
-            <span class="calc-key">Deposito bank (6% / tahun)</span>
-            <span class="calc-val" id="c-bank" style="color:var(--text-muted)">Rp 240.000</span>
-          </div>
-          <div class="calc-row">
-            <span class="calc-key">Return ShortPro vs Bank</span>
-            <span class="calc-val red" id="c-ratio">56× lebih tinggi — mustahil</span>
-          </div>
-        </div>
+        <!-- ========================================== -->
+        <!-- APLIKASI UTAMA SETELAH LOGIN               -->
+        <!-- ========================================== -->
+        <div id="app" class="app">
+            <div class="container">
+                
+                <!-- HEADER -->
+                <div class="header">
+                    <div><strong>📖 Ujian Harian XI TJKT 2</strong></div>
+                    <div>
+                        <span>👤 <b id="whoLabel">-</b></span>
+                        <button class="btn-small btn-danger" onclick="logout()">🚪 Logout</button>
+                    </div>
+                </div>
 
-        <div style="background:var(--red-dim);border:1px solid var(--red);border-radius:6px;padding:14px;font-size:13px;color:#cc8080;line-height:1.6">
-          <strong style="color:var(--red);display:block;margin-bottom:6px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">⚠ Analisis</strong>
-          Tidak ada bisnis konten digital yang menghasilkan 3.400%/tahun secara konsisten. 
-          Warren Buffett — investor terbaik dunia — rata-rata hanya 20%/tahun. 
-          Satu-satunya cara ShortPro bisa bayar return ini: <strong style="color:var(--red)">uang member baru menutup member lama. Itu definisi Ponzi.</strong>
-        </div>
-      </div>
+                <!-- DASHBOARD SISWA -->
+                <div id="studentDashboard" style="display:none;">
+                    <div class="card">
+                        <h3>📚 Pilih Mata Pelajaran</h3>
+                        <div id="subjectsStudentList"></div>
+                    </div>
+                    <div id="studentScoreBox" class="card" style="display:none;">
+                        <h4>📊 Hasil Ujian</h4>
+                        <div id="studentResultInfo"></div>
+                    </div>
+                </div>
 
-      <div class="card">
-        <div class="card-title">📊 Dari mana uang return-nya?</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
-            <div style="font-size:24px;margin-bottom:8px">📢</div>
-            <div style="font-size:12px;font-weight:600;margin-bottom:4px">Iklan</div>
-            <div style="font-size:11px;color:var(--text-muted)">Tidak bisa generate return sebesar ini dari platform kecil</div>
-          </div>
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center">
-            <div style="font-size:24px;margin-bottom:8px">🎬</div>
-            <div style="font-size:12px;font-weight:600;margin-bottom:4px">Konten</div>
-            <div style="font-size:11px;color:var(--text-muted)">Netflix butuh 300 juta subscriber untuk profit tipis</div>
-          </div>
-          <div style="background:var(--red-dim);border:1px solid var(--red);border-radius:6px;padding:14px;text-align:center">
-            <div style="font-size:24px;margin-bottom:8px">👥</div>
-            <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px">Member Baru</div>
-            <div style="font-size:11px;color:#cc8080">Sumber paling logis. Ini yang disebut Ponzi.</div>
-          </div>
-        </div>
-      </div>
-    </div><!-- end tab-kalkulator -->
+                <!-- DASHBOARD GURU -->
+                <div id="teacherDashboard" style="display:none;">
+                    <!-- Card Share QR Code -->
+                    <div class="sync-card">
+                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px">
+                            <span style="font-size:24px">📤</span>
+                            <strong>BAGIKAN DATA KE HP LAIN</strong>
+                        </div>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px">
+                            <button class="btn-small" style="background:white; color:#764ba2; font-weight:bold" onclick="generateShareQR()">📱 Generate QR Code</button>
+                            <button class="btn-small" style="background:white; color:#764ba2; font-weight:bold" onclick="copyShareLink()">🔗 Copy Share Link</button>
+                            <button class="btn-small" style="background:white; color:#764ba2; font-weight:bold" onclick="shareViaWA()">💬 Share ke WhatsApp</button>
+                            <!-- ========== TAMBAHAN: QR LOGIN INSTAN ========== -->
+                            <button class="btn-small" style="background:#4CAF50; color:white; font-weight:bold" onclick="openQRLoginMenu()">🎟️ Generate QR Login</button>
+                            <!-- =============================================== -->
+                        </div>
+                        <div class="small" style="opacity:0.9">
+                            💡 <strong>Cara pakai:</strong> Klik "Generate QR Code" → Teman scan QR → Data otomatis masuk ke HP teman!
+                        </div>
+                    </div>
+                    
+                    <!-- Menu Guru -->
+                    <div class="card">
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px">
+                            <button class="btn-add btn-small" onclick="openAddSubjectModal()">➕ Tambah Mapel</button>
+                            <button class="btn-small btn-add" onclick="openAddStudentModal()">👥 Tambah Siswa</button>
+                            <button class="btn-small btn-export" onclick="exportAllCSV()">📥 Export CSV</button>
+                            <button class="btn-small btn-export" onclick="exportDatabase()">💾 Export DB</button>
+                            <button class="btn-small btn-import" onclick="openImportModal()">📁 Import DB</button>
+                            <button class="btn-small btn-refresh" onclick="renderTeacherDashboard()">🔄 Refresh</button>
+                        </div>
+                        
+                        <h3>📖 Daftar Mata Pelajaran (<span id="subjectCount">0</span>)</h3>
+                        <div id="subjectsTeacherList"></div>
+                        
+                        <hr>
+                        
+                        <h3>👨‍🎓 Daftar Siswa (<span id="studentCount">0</span>)</h3>
+                        <div style="overflow-x:auto">
+                            <table class="table">
+                                <thead>
+                                    <tr><th>Nama</th><th>Username</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody id="studentsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
 
-    <!-- ── TAB: PERBANDINGAN ── -->
-    <div class="tab-content" id="tab-perbandingan">
-      <div class="section-label">Kasus Ponzi Serupa yang Sudah Terbukti</div>
+                    <!-- PANTAU KAMERA SISWA -->
+                    <div class="card">
+                        <h3>📹 PANTAU KAMERA SISWA</h3>
+                        <p class="small">Foto siswa yang diambil saat ujian (setiap 30 detik + saat curang)</p>
+                        <button class="btn-small btn-add" onclick="refreshCameraLogs()">🔄 Refresh</button>
+                        <div id="cameraLogsContainer" style="margin-top:10px;"></div>
+                    </div>
+                </div>
 
-      <div class="card">
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Aplikasi</th>
-              <th>Modus</th>
-              <th>Klaim Return</th>
-              <th>Nasib</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>VTube</strong><br><span style="font-size:11px;color:var(--text-muted)">2020-2021</span></td>
-              <td>Nonton video → reward</td>
-              <td><span class="badge badge-red">Tinggi</span></td>
-              <td><span class="badge badge-red">Ditutup OJK</span></td>
-            </tr>
-            <tr>
-              <td><strong>TikTok Cash</strong><br><span style="font-size:11px;color:var(--text-muted)">2021</span></td>
-              <td>Nonton video TikTok → cashback</td>
-              <td><span class="badge badge-red">Sangat Tinggi</span></td>
-              <td><span class="badge badge-red">Diblokir Kominfo</span></td>
-            </tr>
-            <tr>
-              <td><strong>Snack Video (versi scam)</strong><br><span style="font-size:11px;color:var(--text-muted)">2021-2022</span></td>
-              <td>Nonton konten → reward harian</td>
-              <td><span class="badge badge-amber">Sedang-Tinggi</span></td>
-              <td><span class="badge badge-red">Collapse</span></td>
-            </tr>
-            <tr>
-              <td><strong>Kilau Dana</strong><br><span style="font-size:11px;color:var(--text-muted)">2023</span></td>
-              <td>Deposit → profit harian tetap</td>
-              <td><span class="badge badge-red">Sangat Tinggi</span></td>
-              <td><span class="badge badge-red">Terbukti Scam</span></td>
-            </tr>
-            <tr style="background:var(--red-dim)">
-              <td><strong style="color:var(--red)">ShortPro</strong><br><span style="font-size:11px;color:#cc8080">2025-sekarang</span></td>
-              <td>Nonton drama → profit deposit</td>
-              <td><span class="badge badge-red">375% / 40 hari</span></td>
-              <td><span class="badge badge-amber">⚠ Dalam Pengawasan</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                <!-- HALAMAN UJIAN -->
+                <div id="examPage" style="display:none;">
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; flex-wrap:wrap">
+                            <div>
+                                <h3 id="examSubjectTitle">Ujian</h3>
+                                <div class="small">Total: <span id="qTotal">0</span> soal</div>
+                            </div>
+                            <div class="small">⏱️ Sisa Waktu: <span id="timerDisplay" style="font-weight:bold; font-size:18px">00:00</span></div>
+                        </div>
+                        <div class="small" style="background:#fef3c7; padding:8px; border-radius:8px; margin-bottom:10px">
+                            🔒 <strong>PERINGATAN:</strong> Jangan keluar dari halaman ini! Jika ketahuan, akan ada SUARA MEMALUKAN yang terdengar!
+                        </div>
+                        
+                        <!-- PREVIEW KAMERA -->
+                        <div style="background:#1e293b; padding:10px; border-radius:10px; margin-bottom:15px; text-align:center;">
+                            <div id="cameraStatus" style="color:white; font-size:12px; margin-bottom:5px;">📷 Kamera akan aktif setelah izin</div>
+                            <video id="video" autoplay playsinline style="width:100%; max-width:300px; border-radius:10px; background:#000; display:none;"></video>
+                            <button id="startCameraBtn" class="btn-small" style="background:#4CAF50; color:white; margin-top:5px;" onclick="requestCameraPermission()">📷 Izinkan Kamera</button>
+                            <div class="small" style="color:white;">📹 Kamera akan difoto setiap 30 detik</div>
+                        </div>
+                        
+                        <form id="examForm" onsubmit="return false;">
+                            <div id="questionsContainer"></div>
+                            <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap">
+                                <button class="btn" onclick="submitExam()">✅ Kirim & Selesai</button>
+                                <button class="btn" style="background:#f59e0b" onclick="saveProgress()">💾 Simpan Progress</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
-      <div class="card">
-        <div class="card-title">🔁 Pola yang Selalu Sama</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px">
-            <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em">Langkah 1</div>
-            <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">Kemasan Menarik</div>
-            <div style="font-size:12px;color:var(--text-muted)">Berkedok hiburan, literasi digital, teknologi AI, atau trading</div>
-          </div>
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px">
-            <div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em">Langkah 2</div>
-            <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">Return Kecil Dulu</div>
-            <div style="font-size:12px;color:var(--text-muted)">Fase awal bisa withdraw lancar untuk bangun kepercayaan & testimoni</div>
-          </div>
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px">
-            <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em">Langkah 3</div>
-            <div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">Rekrutmen Masif</div>
-            <div style="font-size:12px;color:var(--text-muted)">Sistem referral agresif agar uang member baru terus mengalir masuk</div>
-          </div>
-          <div style="background:var(--red-dim);border:1px solid var(--red);border-radius:6px;padding:14px">
-            <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em">Akhir</div>
-            <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px">Collapse & Kabur</div>
-            <div style="font-size:12px;color:#cc8080">Begitu rekrutmen berhenti, sistem kolaps. Uang hilang, admin kabur.</div>
-          </div>
-        </div>
-      </div>
-    </div><!-- end tab-perbandingan -->
-
-    <!-- ── TAB: LAPORAN ── -->
-    <div class="tab-content" id="tab-laporan">
-      <div class="section-label">Langkah Jika Sudah Terlanjur Deposit</div>
-
-      <div class="alert-banner" style="margin-bottom:24px">
-        <div class="alert-icon">⚡</div>
-        <div>
-          <strong>Prioritas Utama</strong>
-          <p>Kalau masih bisa, <strong style="color:var(--red)">tarik semua uang sekarang</strong>. Jangan tunggu profit terkumpul. Lebih baik balik modal daripada kehilangan semuanya.</p>
-        </div>
-      </div>
-
-      <div class="two-col">
-        <div>
-          <div class="section-label">Saluran Laporan Resmi</div>
-          <div class="report-links">
-            <a href="https://konsumen.ojk.go.id" target="_blank" class="report-link">
-              <div class="report-link-info">
-                <div class="report-link-name">OJK — Portal Konsumen</div>
-                <div class="report-link-desc">konsumen.ojk.go.id · Laporkan investasi ilegal</div>
-              </div>
-              <div class="report-link-arrow">→</div>
-            </a>
-            <a href="https://www.lapor.go.id" target="_blank" class="report-link">
-              <div class="report-link-info">
-                <div class="report-link-name">LAPOR! — Layanan Aspirasi</div>
-                <div class="report-link-desc">lapor.go.id · Pengaduan ke pemerintah</div>
-              </div>
-              <div class="report-link-arrow">→</div>
-            </a>
-            <a href="https://patrolisiber.id" target="_blank" class="report-link">
-              <div class="report-link-info">
-                <div class="report-link-name">Patroli Siber Polri</div>
-                <div class="report-link-desc">patrolisiber.id · Laporan kejahatan digital</div>
-              </div>
-              <div class="report-link-arrow">→</div>
-            </a>
-            <a href="https://aduankonten.id" target="_blank" class="report-link">
-              <div class="report-link-info">
-                <div class="report-link-name">Aduan Konten Kominfo</div>
-                <div class="report-link-desc">aduankonten.id · Minta blokir situs</div>
-              </div>
-              <div class="report-link-arrow">→</div>
-            </a>
-          </div>
-        </div>
-
-        <div>
-          <div class="section-label">Checklist Sebelum Lapor</div>
-          <div class="card" style="padding:16px">
-            <ul class="checklist" id="checklist2">
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Screenshot semua bukti transfer/deposit</div>
-              </li>
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Simpan history chat dengan admin/promotor</div>
-              </li>
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Catat nama rekening tujuan transfer</div>
-              </li>
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Screenshot profil aplikasi & klaim return</div>
-              </li>
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Catat tanggal deposit & nominal lengkap</div>
-              </li>
-              <li class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <div class="check-text">Hubungi bank untuk blokir transaksi lebih lanjut</div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="section-label" style="margin-top:16px">Kontak Darurat</div>
-          <div class="card" style="padding:16px">
-            <div style="display:flex;flex-direction:column;gap:10px">
-              <div style="display:flex;justify-content:space-between;font-size:13px">
-                <span style="color:var(--text-muted)">OJK Call Center</span>
-                <span style="font-family:var(--mono);color:var(--text)">157</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:13px">
-                <span style="color:var(--text-muted)">Bareskrim Polri</span>
-                <span style="font-family:var(--mono);color:var(--text)">0800-1-999-999</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:13px">
-                <span style="color:var(--text-muted)">Kominfo Aduan</span>
-                <span style="font-family:var(--mono);color:var(--text)">159</span>
-              </div>
+                <!-- HALAMAN HASIL -->
+                <div id="resultPage" style="display:none;">
+                    <div class="card">
+                        <h3>📄 Hasil Ujian</h3>
+                        <div id="resultDetail"></div>
+                        <button class="btn" onclick="backToDashboard()">◀ Kembali ke Dashboard</button>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
 
-      <!-- WARNING tidak ajak orang -->
-      <div style="background:var(--amber-dim);border:1px solid var(--amber);border-radius:8px;padding:16px 20px;margin-top:8px">
-        <strong style="font-family:var(--mono);font-size:12px;color:var(--amber);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em">⚠ Penting untuk Lo</strong>
-        <p style="font-size:13px;color:#c8a060;line-height:1.6">
-          Jangan ajak orang lain masuk lagi. Meskipun lo sendiri sudah telanjur, mengajak orang lain bisa membuat lo ikut bertanggung jawab secara hukum sebagai promotor skema ilegal. Prioritas sekarang: <strong style="color:var(--amber)">selamatkan uang lo sendiri dan peringatkan kenalan tanpa menyuruh mereka masuk</strong>.
-        </p>
-      </div>
-    </div><!-- end tab-laporan -->
+    <!-- ========================================== -->
+    <!-- MODAL (POPUP)                              -->
+    <!-- ========================================== -->
 
-  </div><!-- end main -->
+    <!-- Modal QR Code -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <h3>📱 Scan QR Code untuk Import Data</h3>
+            <p class="small">Teman cukup scan QR ini menggunakan kamera HP, data akan otomatis masuk!</p>
+            <div class="qr-container">
+                <div id="qrcode" class="qr-code"></div>
+                <div class="share-link" id="shareLinkDisplay"></div>
+            </div>
+            <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap">
+                <button class="btn" style="background:#25D366; color:white" onclick="shareViaWA()">📱 Share ke WhatsApp</button>
+                <button class="btn" style="background:#1DA1F2; color:white" onclick="shareViaTwitter()">🐦 Share ke Twitter</button>
+                <button class="btn" style="background:#aaa" onclick="closeQRModal()">Tutup</button>
+            </div>
+            <div class="small" style="margin-top:12px; color:#8b5cf6">
+                ⚠️ Link akan expired dalam 24 jam. Tapi file bisa di-export ulang kapan saja.
+            </div>
+        </div>
+    </div>
 
-  <div class="footer">
-    WaspадаInvest · Data berbasis sumber publik · Bukan afiliasi OJK atau pemerintah<br>
-    Selalu verifikasi ke sumber resmi sebelum mengambil keputusan finansial
-  </div>
-</div><!-- end dashboard -->
+    <!-- Modal QR Scanner Login -->
+    <div id="qrScannerModal" class="modal">
+        <div class="modal-content" style="max-width:500px;">
+            <h3>📷 Scan QR Code Login</h3>
+            <p class="small">Arahkan kamera ke QR code dari guru</p>
+            <div id="qr-reader" style="width:100%;"></div>
+            <button class="btn" style="margin-top:10px; background:#aaa;" onclick="closeQRScannerModal()">Tutup</button>
+        </div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-  // ══════════════════════════════════════════════
-  //  KONFIGURASI EMAILJS
-  //  Email pengirim: ynazzstore@gmail.com
-  //  Ikuti panduan setup di bawah ini:
-  //
-  //  1. Buka https://www.emailjs.com dan daftar/login
-  //  2. Add New Service → pilih Gmail → connect ynazzstore@gmail.com
-  //  3. Salin SERVICE ID → isi di EMAILJS_SERVICE_ID
-  //  4. Buat Email Template (lihat contoh di bawah) → salin TEMPLATE ID
-  //  5. Account → API Keys → salin Public Key
-  //
-  //  CONTOH ISI TEMPLATE EMAILJS:
-  //  Subject : Verifikasi Akun WaspedaInvest
-  //  Body    :
-  //    Halo {{to_name}},
-  //    Klik link berikut untuk verifikasi akun kamu:
-  //    {{verify_link}}
-  //    Username kamu: {{username}}
-  //    Jika kamu tidak mendaftar, abaikan email ini.
-  // ══════════════════════════════════════════════
-  const EMAILJS_SERVICE_ID  = 'service_m04ygik';
-  const EMAILJS_TEMPLATE_ID = 'template_6hli0do';
-  const EMAILJS_PUBLIC_KEY  = 'EF4Tx4NndG_lsZgqA';
-  const ADMIN_EMAIL         = 'ynazzstore@gmail.com'; // email admin
+    <!-- Modal QR Login Menu (Pilih Siswa) -->
+    <div id="qrLoginMenuModal" class="modal">
+        <div class="modal-content">
+            <h3>🎟️ Pilih Siswa untuk QR Login</h3>
+            <div id="qrStudentList"></div>
+            <button class="btn" style="background:#aaa" onclick="closeModal('qrLoginMenuModal')">Batal</button>
+        </div>
+    </div>
 
-  // ── ADMIN HARDCODED ──
-  const ADMIN = { username: 'Raditya 123', password: 'raditya p01', role: 'admin' };
+    <!-- Modal Tambah Mata Pelajaran -->
+    <div id="addSubjectModal" class="modal">
+        <div class="modal-content">
+            <h3>➕ Tambah Mata Pelajaran</h3>
+            <input id="newSubjectName" class="input" placeholder="Nama Mata Pelajaran">
+            <textarea id="newSubjectQuestions" class="input" rows="8" placeholder="Soal ujian dalam format JSON:&#10;&#10;[&#10;  {&#10;    &quot;question&quot;: &quot;Apa ibu kota Indonesia?&quot;,&#10;    &quot;options&quot;: [&quot;Jakarta&quot;, &quot;Surabaya&quot;, &quot;Bandung&quot;, &quot;Medan&quot;],&#10;    &quot;answer&quot;: 0,&#10;    &quot;type&quot;: &quot;pilihan&quot;&#10;  },&#10;  {&#10;    &quot;question&quot;: &quot;Jelaskan pengertian HTML!&quot;,&#10;    &quot;type&quot;: &quot;essay&quot;&#10;  }&#10;]"></textarea>
+            <div style="display:flex; gap:10px; margin-top:10px">
+                <button class="btn" onclick="addSubject()">Simpan</button>
+                <button class="btn" style="background:#aaa" onclick="closeModal('addSubjectModal')">Batal</button>
+            </div>
+            <div class="small" style="margin-top:10px">
+                💡 Format JSON: untuk pilihan ganda wajib ada "options" dan "answer" (index mulai 0), untuk essay cukup "question" dan "type":"essay"
+            </div>
+        </div>
+    </div>
 
-  // ── STORAGE KEY ──
-  const STORE_KEY = 'wi_users_v1';
+    <!-- Modal Tambah Siswa -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <h3>👥 Tambah Siswa</h3>
+            <input id="studentName" class="input" placeholder="Nama Lengkap">
+            <input id="studentUsername" class="input" placeholder="Username">
+            <input id="studentPassword" class="input" type="password" placeholder="Password">
+            <div style="display:flex; gap:10px; margin-top:10px">
+                <button class="btn" onclick="addStudent()">Simpan</button>
+                <button class="btn" style="background:#aaa" onclick="closeModal('addStudentModal')">Batal</button>
+            </div>
+        </div>
+    </div>
 
-  function getUsers() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
-    catch { return []; }
-  }
+    <!-- Modal Import Database -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <h3>📁 Import Database</h3>
+            <p class="small">Pilih file JSON hasil export sebelumnya</p>
+            <input type="file" id="importFile" accept=".json" class="input">
+            <div style="display:flex; gap:10px; margin-top:10px">
+                <button class="btn" onclick="importDatabase()">Import</button>
+                <button class="btn" style="background:#aaa" onclick="closeModal('importModal')">Batal</button>
+            </div>
+        </div>
+    </div>
 
-  function saveUsers(users) {
-    localStorage.setItem(STORE_KEY, JSON.stringify(users));
-  }
+    <!-- Modal Lihat Foto Kamera -->
+    <div id="cameraModal" class="modal">
+        <div class="modal-content">
+            <h3>📸 Foto Siswa</h3>
+            <img id="modalCameraImg" style="width:100%; border-radius:10px;">
+            <button class="btn" style="margin-top:10px;" onclick="closeCameraModal()">Tutup</button>
+        </div>
+    </div>
 
-  // ── NAVIGASI SCREEN ──
-  function showLogin() {
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('register-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'none';
-  }
+    <script>
+        // ==========================================
+        // DATA DEFAULT DAN STORAGE MANAGEMENT
+        // ==========================================
+        
+        let subjects = JSON.parse(localStorage.getItem('subjects')) || [
+            { id: 1, name: "Pendidikan Agama", questions: [] },
+            { id: 2, name: "PKN", questions: [] },
+            { id: 3, name: "B. Indonesia", questions: [] },
+            { id: 4, name: "Matematika", questions: [] },
+            { id: 5, name: "B. Inggris", questions: [] },
+            { id: 6, name: "Produktif RPL", questions: [] },
+            { id: 7, name: "Sejarah Indonesia", questions: [] },
+            { id: 8, name: "Seni Budaya", questions: [] },
+            { id: 9, name: "PJOK", questions: [] },
+            { id: 10, name: "B. Jawa", questions: [] }
+        ];
 
-  function showRegister() {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('register-screen').style.display = 'flex';
-    document.getElementById('dashboard').style.display = 'none';
-  }
+        let students = JSON.parse(localStorage.getItem('students')) || [
+            { name: "Siswa 1", username: "siswa1", password: "password" }
+        ];
 
-  // ── LOGIN ──
-  function doLogin() {
-    const u = document.getElementById('username').value.trim();
-    const p = document.getElementById('password').value;
-    const err = document.getElementById('login-error');
+        let examResults = JSON.parse(localStorage.getItem('examResults')) || [];
 
-    // Cek admin
-    if (u === ADMIN.username && p === ADMIN.password) {
-      masukDashboard(u, 'admin');
-      err.style.display = 'none';
-      return;
-    }
+        let currentUser = null;
+        let currentSubject = null;
+        let currentAnswers = {};
+        let examTimer = null;
+        let cheatWarningCount = 0;
 
-    // Cek user terdaftar
-    const users = getUsers();
-    const found = users.find(x => x.username === u && x.password === p);
+        // ========== TAMBAHAN: VARIABEL KAMERA ==========
+        let cameraStream = null;
+        let cameraInterval = null;
+        let videoElement = null;
+        let isCameraReady = false;
 
-    if (found) {
-      if (!found.verified) {
-        err.textContent = 'Email kamu belum diverifikasi. Cek inbox email kamu.';
-        err.style.display = 'block';
-        return;
-      }
-      if (!found.approved) {
-        err.textContent = 'Akun kamu sedang menunggu persetujuan admin.';
-        err.style.display = 'block';
-        return;
-      }
-      masukDashboard(u, 'user');
-      err.style.display = 'none';
-    } else {
-      err.textContent = 'Username atau password salah.';
-      err.style.display = 'block';
-    }
-  }
+        // ========== TAMBAHAN: QR SCANNER ==========
+        let html5QrCode = null;
 
-  function masukDashboard(username, role) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('register-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('topbar-user').textContent = username + (role === 'admin' ? ' 👑' : '');
-  }
+        // ==========================================
+        // FITUR SUARA MEMALUKAN (ANTI-CHEAT)
+        // ==========================================
+        
+        function playShameSound(message) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(message);
+                utterance.lang = 'id-ID';
+                utterance.rate = 1.1;
+                utterance.pitch = 1.2;
+                utterance.volume = 1;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+            }
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = 880;
+                gainNode.gain.value = 0.5;
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 1);
+                oscillator.stop(audioCtx.currentTime + 0.8);
+            } catch(e) {
+                console.log("Audio fallback error:", e);
+            }
+        }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      const ls = document.getElementById('login-screen');
-      const rs = document.getElementById('register-screen');
-      if (ls && ls.style.display !== 'none') doLogin();
-    }
-  });
+        function shameOnYou(reason) {
+            const examPage = document.getElementById('examPage');
+            if (examPage && examPage.style.display !== 'none') {
+                cheatWarningCount++;
+                examPage.classList.add('shame-effect');
+                setTimeout(() => examPage.classList.remove('shame-effect'), 1500);
+                
+                const toast = document.createElement('div');
+                toast.className = 'shame-toast';
+                toast.innerHTML = `🚨 ${reason} 🚨<br>📢 MALU SAMA TEMAN-TEMAN! Jangan curang!`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 4000);
+                
+                let shameMessage = "";
+                if (reason.includes("keluar") || reason.includes("tab") || reason.includes("pindah")) {
+                    shameMessage = "Perhatian! Anda mencoba keluar dari halaman ujian. Ini tindakan curang! Maluuu!";
+                } else if (reason.includes("klik kanan")) {
+                    shameMessage = "Hei! Jangan klik kanan ya. Yang jujur dong! Malu sama teman sekelas!";
+                } else if (reason.includes("copy") || reason.includes("paste")) {
+                    shameMessage = "Waduh, mau copy-paste ya? Hanya yang jujur yang sukses! Malu-maluin!";
+                } else if (reason.includes("Developer") || reason.includes("F12")) {
+                    shameMessage = "Kamu mencoba membuka alat developer. Itu tidak boleh saat ujian! Malu!";
+                } else {
+                    shameMessage = "Halo! Kamu ketahuan berbuat curang. Ayo ujian dengan jujur! Malu-maluin!";
+                }
+                playShameSound(shameMessage);
+                
+                let cheatLog = JSON.parse(localStorage.getItem('cheatLog') || '[]');
+                cheatLog.push({
+                    waktu: new Date().toISOString(),
+                    tindakan: reason,
+                    siswa: currentUser?.username || 'unknown'
+                });
+                localStorage.setItem('cheatLog', JSON.stringify(cheatLog));
+                
+                // FOTO SAAT CURANG
+                captureAndSave("KETAHUAN CURANG: " + reason);
+            }
+        }
 
-  function doLogout() {
-    document.getElementById('dashboard').style.display = 'none';
-    showLogin();
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-  }
+        // ==========================================
+        // EVENT LISTENER ANTI-CHEAT
+        // ==========================================
+        
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                cheatWarningCount++;
+                shameOnYou("⚠️ KAMU KELUAR DARI HALAMAN UJIAN (Pindah tab/aplikasi)");
+                if (cheatWarningCount >= 3) {
+                    alert("Anda sudah 3x keluar halaman! Ujian akan dikirim paksa.");
+                    submitExam();
+                }
+            }
+        });
+        
+        document.addEventListener('contextmenu', function(e) {
+            const examPage = document.getElementById('examPage');
+            if (examPage && examPage.style.display !== 'none') {
+                e.preventDefault();
+                shameOnYou("🚫 Klik kanan tidak diperbolehkan saat ujian!");
+                return false;
+            }
+        });
+        
+        document.addEventListener('copy', function(e) {
+            const examPage = document.getElementById('examPage');
+            if (examPage && examPage.style.display !== 'none') {
+                shameOnYou("📋 COPY DETECTED! Menyalin soal dilarang!");
+                e.preventDefault();
+            }
+        });
+        
+        document.addEventListener('paste', function(e) {
+            const examPage = document.getElementById('examPage');
+            if (examPage && examPage.style.display !== 'none') {
+                shameOnYou("📋 PASTE DETECTED! Menempel jawaban dari luar dilarang!");
+                e.preventDefault();
+            }
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            const examPage = document.getElementById('examPage');
+            if (examPage && examPage.style.display !== 'none') {
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                    shameOnYou("🔧 Mencoba membuka Developer Tools (F12)!");
+                }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
+                    e.preventDefault();
+                    shameOnYou("🔧 Mencoba membuka Developer Tools!");
+                }
+                if (e.ctrlKey && e.key === 'u') {
+                    e.preventDefault();
+                    shameOnYou("🔧 Mencoba melihat source code!");
+                }
+                if (e.ctrlKey && e.key === 'Tab') {
+                    shameOnYou("🔄 Ctrl+Tab terdeteksi! Jangan pindah aplikasi!");
+                }
+                if (e.altKey && e.key === 'Tab') {
+                    e.preventDefault();
+                    shameOnYou("🔄 Alt+Tab terdeteksi! Jangan pindah aplikasi!");
+                }
+            }
+        });
 
-  // ── REGISTER ──
-  async function doRegister() {
-    const name     = document.getElementById('reg-name').value.trim();
-    const email    = document.getElementById('reg-email').value.trim().toLowerCase();
-    const username = document.getElementById('reg-username').value.trim();
-    const pass     = document.getElementById('reg-password').value;
-    const pass2    = document.getElementById('reg-password2').value;
-    const errEl    = document.getElementById('reg-error');
+        // ==========================================
+        // SPLASH SCREEN AUTO HIDE
+        // ==========================================
+        setTimeout(() => {
+            const splash = document.getElementById('splashScreen');
+            splash.classList.add('hide');
+            document.getElementById('cbtApp').style.display = 'block';
+        }, 2000);
 
-    // Validasi
-    if (!name || !email || !username || !pass || !pass2) {
-      return showRegErr('Semua kolom wajib diisi.');
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return showRegErr('Format email tidak valid.');
-    }
-    if (pass.length < 8) {
-      return showRegErr('Password minimal 8 karakter.');
-    }
-    if (pass !== pass2) {
-      return showRegErr('Konfirmasi password tidak cocok.');
-    }
-
-    const users = getUsers();
-    if (users.find(x => x.username === username)) {
-      return showRegErr('Username sudah dipakai, coba username lain.');
-    }
-    if (users.find(x => x.email === email)) {
-      return showRegErr('Email sudah terdaftar. Silakan login.');
-    }
-
-    // Buat token verifikasi
-    const token = Math.random().toString(36).substring(2) + Date.now().toString(36);
-    const newUser = { name, email, username, password: pass, token, verified: false, approved: false, createdAt: Date.now() };
-
-    // Simpan dulu
-    users.push(newUser);
-    saveUsers(users);
-
-    // Kirim email via EmailJS
-    const btn = document.getElementById('reg-btn');
-    btn.textContent = 'Mengirim email...';
-    btn.disabled = true;
-
-    const verifyLink = `${location.href.split('?')[0]}?verify=${token}&u=${encodeURIComponent(username)}`;
-
-    try {
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_name:     name,
-        to_email:    email,
-        username:    username,
-        verify_link: verifyLink,
-        from_name:   'WaspedaInvest',
-        reply_to:    ADMIN_EMAIL,
-      });
-
-      // Tampilkan pending
-      document.getElementById('reg-form').style.display = 'none';
-      document.getElementById('reg-pending').style.display = 'block';
-      document.getElementById('reg-email-show').textContent = email;
-
-    } catch (e) {
-      // Rollback jika gagal kirim
-      const idx = getUsers().findIndex(x => x.username === username);
-      if (idx !== -1) { const u2 = getUsers(); u2.splice(idx,1); saveUsers(u2); }
-      showRegErr('Gagal kirim email verifikasi. Cek koneksi internet kamu. (' + (e.text || e.message || 'error') + ')');
-      btn.textContent = 'Daftar & Kirim Verifikasi Email';
-      btn.disabled = false;
-    }
-  }
-
-  function showRegErr(msg) {
-    const el = document.getElementById('reg-error');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  // ── CEK TOKEN VERIFIKASI DI URL ──
-  (function checkVerifyToken() {
-    const params = new URLSearchParams(location.search);
-    const token = params.get('verify');
-    const uname = params.get('u');
-    if (!token || !uname) return;
-
-    const users = getUsers();
-    const idx = users.findIndex(x => x.username === decodeURIComponent(uname) && x.token === token);
-    if (idx !== -1) {
-      users[idx].verified = true;
-      users[idx].approved = true; // auto-approve setelah verifikasi email
-      saveUsers(users);
-      // Bersihkan URL
-      history.replaceState({}, '', location.pathname);
-      // Tampilkan pesan sukses di login
-      setTimeout(() => {
-        document.getElementById('login-error').style.display = 'block';
-        document.getElementById('login-error').style.background = 'var(--green-dim)';
-        document.getElementById('login-error').style.borderColor = 'var(--green)';
-        document.getElementById('login-error').style.color = 'var(--green)';
-        document.getElementById('login-error').textContent = '✓ Email berhasil diverifikasi! Silakan login sekarang.';
-      }, 300);
-    }
-  })();
-
-  // ── TABS ──
-  function switchTab(id) {
-    document.querySelectorAll('.tab').forEach((t, i) => {
-      t.classList.toggle('active', t.getAttribute('onclick').includes(id));
-    });
-    document.querySelectorAll('.tab-content').forEach(c => {
-      c.classList.toggle('active', c.id === 'tab-' + id);
-    });
-  }
-
-  // ── KALKULATOR ──
-  function updateCalc(val) {
-    const v = parseInt(val);
-    // Pakai multiplier 3.75x (375%) sebagai default ShortPro
-    const multiplier = 3.75;
-    const pct = Math.round(multiplier * 100);
-    const profit = Math.round(v * multiplier);
-    const total = v + profit;
-    const annualPct = Math.round((Math.pow(1 + multiplier, 365/40) - 1) * 100);
-    const bankProfit = Math.round(v * 0.06 / 365 * 40);
-    const ratio = Math.round(profit / (bankProfit || 1));
-
-    const fmt = n => 'Rp ' + n.toLocaleString('id-ID');
-
-    // Sync slider label
-    document.getElementById('deposit-label').textContent = fmt(v);
-    if (document.getElementById('deposit-input'))
-      document.getElementById('deposit-input').value = v.toLocaleString('id-ID');
-
-    // Kalkulator
-    document.getElementById('c-modal').textContent = fmt(v);
-    document.getElementById('c-pct-label').textContent = '(' + pct + '% / 40 hari)';
-    document.getElementById('c-profit').textContent = '+ ' + fmt(profit);
-    document.getElementById('c-total').textContent = fmt(total);
-    document.getElementById('c-annual').textContent = '~' + annualPct.toLocaleString('id-ID') + '% / tahun';
-    document.getElementById('c-bank').textContent = fmt(bankProfit);
-    document.getElementById('c-ratio').textContent = ratio + '× lebih tinggi — mustahil';
-
-    // Sync overview cards & labels
-    const pctStr = pct + '%';
-    const annualStr = '~' + annualPct.toLocaleString('id-ID') + '%';
-    if (document.getElementById('stat-return')) document.getElementById('stat-return').textContent = pctStr;
-    if (document.getElementById('stat-annual')) document.getElementById('stat-annual').textContent = annualStr;
-    if (document.getElementById('alert-return')) document.getElementById('alert-return').textContent = pctStr;
-    if (document.getElementById('verdict-return')) document.getElementById('verdict-return').textContent = pctStr;
-    if (document.getElementById('flag-return-pct')) document.getElementById('flag-return-pct').textContent = pctStr;
-  }
-
-  function syncFromSlider(val) {
-    updateCalc(val);
-  }
-
-  function syncFromInput(el) {
-    // Saat ngetik: jangan reformat (biar cursor ga loncat), cukup update kalkulator
-    const digits = el.value.replace(/\D/g, '');
-    const v = parseInt(digits) || 0;
-    const clamped = Math.min(Math.max(v, 100000), 100000000);
-    document.getElementById('deposit-slider').value = clamped;
-    updateCalc(v);
-  }
-
-  function formatDepositInput(el) {
-    // Baru format saat blur (selesai ngetik)
-    const digits = el.value.replace(/\D/g, '');
-    const v = parseInt(digits) || 0;
-    el.value = v.toLocaleString('id-ID');
-  }
-
-  // Init on load
-  updateCalc(1000000);
-
-  // ── CHECKLIST BAHAYA ──
-  function toggleCheck(el) {
-    el.classList.toggle('checked');
-    if (el.querySelector('.check-box')) {
-      el.querySelector('.check-box').textContent = el.classList.contains('checked') ? '✓' : '';
-    }
-    updateDangerScore();
-  }
-
-  function updateDangerScore() {
-    const checked = document.querySelectorAll('#checklist .check-item.checked').length;
-    const total = document.querySelectorAll('#checklist .check-item').length;
-    const scoreEl = document.getElementById('danger-score');
-    if (checked === 0) { scoreEl.style.display = 'none'; return; }
-    scoreEl.style.display = 'block';
-    const pct = Math.round(checked / total * 100);
-    if (checked >= 3) {
-      scoreEl.textContent = `⚠ ${checked}/${total} tanda terdeteksi — SEGERA TARIK UANG`;
-      scoreEl.style.color = 'var(--red)';
-    } else if (checked >= 1) {
-      scoreEl.textContent = `${checked}/${total} tanda terdeteksi — Pantau ketat`;
-      scoreEl.style.color = 'var(--amber)';
-    }
-  }
-</script>
+        // ==========================================
+        // FUNGSI LOGIN DAN AUTENTIKASI
+        // ==========================================
+        
+        function performLogin() {
+            const role = document.getElementById('roleSelect').value;
+            const username = document.getElementById('loginUser').value.trim();
+            const password = document.getElementById('loginPass').value;
+            
+            if (role === 'guru') {
+                if (username === 'guru' && password === 'admin') {
+                    currentUser = { username, role: 'guru', name: 'Guru' };
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('app').style.display = 'block';
+                    document.getElementById('whoLabel').innerHTML = '👨‍🏫 Guru';
+                    renderTeacherDashboard();
+                } else {
+                    alert("❌ Login guru gagal!\nUsername: guru\nPassword: admin");
+                }
+            } else {
+                const student = students.find(s => s.username === username && s.password === password);
+                if (student) {
+                    currentUser = { 
+                        username: student.username, 
+                        name: student.name, 
+                        role: 'murid' 
+                    };
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('app').style.display = 'block';
+                    document.getElementById('whoLabel').innerHTML = `👨‍🎓 ${student.name}`;
+                    renderStudentDashboard();
+                } else {
+                    alert("❌ Siswa tidak ditemukan!\nCoba: siswa1 / password");
+                }
+            }
+        }
+        
+        // ========== TAMBAHAN: LOGIN VIA QR ==========
+        function performLoginViaQR(username, password) {
+            const student = students.find(s => s.username === username && s.password === password);
+            if (student) {
+                currentUser = { 
+                    username: student.username, 
+                    name: student.name, 
+                    role: 'murid' 
+                };
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                document.getElementById('whoLabel').innerHTML = `👨‍🎓 ${student.name}`;
+                renderStudentDashboard();
+                return true;
+            } else {
+                alert("❌ QR Code tidak valid! Siswa tidak ditemukan.");
+                return false;
+            }
+        }
+        
+        function logout() {
+            if (examTimer) {
+                clearInterval(examTimer);
+                examTimer = null;
+            }
+            currentUser = null;
+            currentSubject = null;
+            currentAnswers = {};
+            cheatWarningCount = 0;
+            
+            stopCamera();
+            
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            document.getElementById('roleSelect').value = 'murid';
+        }
+        
+        // ==========================================
+        // FUNGSI DASHBOARD SISWA
+        // ==========================================
+        
+        function renderStudentDashboard() {
+            document.getElementById('studentDashboard').style.display = 'block';
+            document.getElementById('teacherDashboard').style.display = 'none';
+            document.getElementById('examPage').style.display = 'none';
+            document.getElementById('resultPage').style.display = 'none';
+            
+            cheatWarningCount = 0;
+            
+            let html = '';
+            subjects.forEach(sub => {
+                const hasDone = examResults.some(r => r.username === currentUser.username && r.subjectId === sub.id);
+                html += `<div class="subject-card">
+                            <div>
+                                <b>📘 ${sub.name}</b>
+                                ${hasDone ? '<span class="badge badge-success">✅ Sudah dikerjakan</span>' : '<span class="badge badge-warning">⏳ Belum dikerjakan</span>'}
+                            </div>
+                            <button class="btn-small btn-add" onclick="startExam(${sub.id})" ${hasDone ? 'disabled' : ''}>
+                                ${hasDone ? 'Sudah Selesai' : '🚀 Mulai Ujian'}
+                            </button>
+                         </div>`;
+            });
+            document.getElementById('subjectsStudentList').innerHTML = html;
+            
+            const studentResults = examResults.filter(r => r.username === currentUser.username);
+            if (studentResults.length > 0) {
+                document.getElementById('studentScoreBox').style.display = 'block';
+                let resultHtml = '<div style="margin-top:10px">';
+                studentResults.forEach(r => {
+                    const sub = subjects.find(s => s.id === r.subjectId);
+                    const persen = Math.round((r.score / r.total) * 100);
+                    resultHtml += `<div style="margin-bottom:8px">
+                                    <b>${sub?.name || r.subjectName}</b>: 
+                                    Nilai ${r.score}/${r.total} (${persen}%)
+                                    <div class="small">📅 ${new Date(r.date).toLocaleDateString('id-ID')}</div>
+                                </div>`;
+                });
+                resultHtml += '</div>';
+                document.getElementById('studentResultInfo').innerHTML = resultHtml;
+            } else {
+                document.getElementById('studentScoreBox').style.display = 'none';
+            }
+        }
+        
+        // ==========================================
+        // FUNGSI UJIAN (MULAI, RENDER, SUBMIT)
+        // ==========================================
+        
+        function startExam(subjectId) {
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) {
+                alert("Mata pelajaran tidak ditemukan!");
+                return;
+            }
+            
+            const hasDone = examResults.some(r => r.username === currentUser.username && r.subjectId === subjectId);
+            if (hasDone) {
+                alert("Anda sudah mengerjakan ujian ini sebelumnya!");
+                return;
+            }
+            
+            currentSubject = subject;
+            const savedProgress = localStorage.getItem(`progress_${currentUser.username}_${subjectId}`);
+            if (savedProgress) {
+                currentAnswers = JSON.parse(savedProgress);
+            } else {
+                currentAnswers = {};
+            }
+            
+            document.getElementById('studentDashboard').style.display = 'none';
+            document.getElementById('examPage').style.display = 'block';
+            document.getElementById('examSubjectTitle').innerHTML = subject.name;
+            
+            renderQuestions();
+            startTimer(30);
+            
+            startCameraCapture();
+        }
+        
+        function renderQuestions() {
+            const subject = currentSubject;
+            if (!subject || !subject.questions || subject.questions.length === 0) {
+                document.getElementById('questionsContainer').innerHTML = '<div class="soal"><p>⚠️ Belum ada soal untuk mata pelajaran ini. Silahkan hubungi guru.</p></div>';
+                document.getElementById('qTotal').innerText = '0';
+                return;
+            }
+            
+            document.getElementById('qTotal').innerText = subject.questions.length;
+            let html = '';
+            
+            subject.questions.forEach((q, idx) => {
+                html += `<div class="soal" data-index="${idx}">
+                            <strong>${idx+1}. ${escapeHtml(q.question)}</strong><br>`;
+                
+                if (q.type === 'essay') {
+                    html += `<div class="essay">
+                                <textarea class="essay-text" data-idx="${idx}" placeholder="Tulis jawaban essay di sini..." rows="4">${escapeHtml(currentAnswers[idx] || '')}</textarea>
+                            </div>`;
+                } else {
+                    if (q.options && q.options.length > 0) {
+                        html += `<div class="options">`;
+                        q.options.forEach((opt, optIdx) => {
+                            const isChecked = currentAnswers[idx] == optIdx;
+                            html += `<label>
+                                        <input type="radio" name="q${idx}" value="${optIdx}" ${isChecked ? 'checked' : ''}>
+                                        ${escapeHtml(opt)}
+                                    </label>`;
+                        });
+                        html += `</div>`;
+                    } else {
+                        html += `<div class="small" style="color:red;">⚠️ Opsi jawaban tidak tersedia</div>`;
+                    }
+                }
+                html += `</div>`;
+            });
+            
+            document.getElementById('questionsContainer').innerHTML = html;
+            
+            document.querySelectorAll('.essay-text').forEach(textarea => {
+                textarea.addEventListener('input', (e) => {
+                    const idx = parseInt(e.target.dataset.idx);
+                    currentAnswers[idx] = e.target.value;
+                    saveProgress();
+                });
+            });
+            
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const name = e.target.name;
+                    const idx = parseInt(name.substring(1));
+                    currentAnswers[idx] = parseInt(e.target.value);
+                    saveProgress();
+                });
+            });
+        }
+        
+        function startTimer(minutes) {
+            if (examTimer) clearInterval(examTimer);
+            
+            let timeLeft = minutes * 60;
+            const timerDisplay = document.getElementById('timerDisplay');
+            
+            examTimer = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(examTimer);
+                    examTimer = null;
+                    alert("⏰ WAKTU HABIS! Ujian akan dikirim otomatis.");
+                    submitExam();
+                }
+                
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timerDisplay.innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+                
+                if (timeLeft === 300) {
+                    playShameSound("Perhatian! Waktu ujian tersisa 5 menit lagi. Selesaikan segera!");
+                }
+                if (timeLeft === 60) {
+                    playShameSound("Perhatian! Waktu ujian tersisa 1 menit lagi!");
+                }
+                
+                timeLeft--;
+            }, 1000);
+        }
+        
+        function saveProgress() {
+            if (currentSubject && currentUser) {
+                localStorage.setItem(`progress_${currentUser.username}_${currentSubject.id}`, JSON.stringify(currentAnswers));
+            }
+        }
+        
+        function submitExam() {
+            if (!currentSubject || !currentUser) {
+                alert("Tidak ada ujian yang sedang berlangsung");
+                return;
+            }
+            
+            if (examTimer) {
+                clearInterval(examTimer);
+                examTimer = null;
+            }
+            
+            stopCamera();
+            
+            let score = 0;
+            let totalPilihan = 0;
+            const questions = currentSubject.questions;
+            
+            questions.forEach((q, idx) => {
+                if (q.type !== 'essay') {
+                    totalPilihan++;
+                    if (currentAnswers[idx] !== undefined && parseInt(currentAnswers[idx]) === q.answer) {
+                        score++;
+                    }
+                }
+            });
+            
+            examResults = examResults.filter(r => !(r.username === currentUser.username && r.subjectId === currentSubject.id));
+            examResults.push({
+                username: currentUser.username,
+                name: currentUser.name,
+                subjectId: currentSubject.id,
+                subjectName: currentSubject.name,
+                score: score,
+                total: totalPilihan,
+                answers: currentAnswers,
+                date: new Date().toISOString()
+            });
+            
+            localStorage.setItem('examResults', JSON.stringify(examResults));
+            localStorage.removeItem(`progress_${currentUser.username}_${currentSubject.id}`);
+            
+            const persen = Math.round((score / totalPilihan) * 100);
+            let grade = '';
+            if (persen >= 90) grade = 'A (Sangat Baik)';
+            else if (persen >= 80) grade = 'B (Baik)';
+            else if (persen >= 70) grade = 'C (Cukup)';
+            else if (persen >= 60) grade = 'D (Kurang)';
+            else grade = 'E (Harus Remedial)';
+            
+            alert(`✅ Ujian selesai!\nNilai Anda: ${score}/${totalPilihan} (${persen}%)\nPredikat: ${grade}`);
+            
+            backToDashboard();
+        }
+        
+        function backToDashboard() {
+            stopCamera();
+            
+            if (currentUser.role === 'murid') {
+                renderStudentDashboard();
+            } else {
+                renderTeacherDashboard();
+            }
+        }
+        
+        // ==========================================
+        // FUNGSI DASHBOARD GURU (CRUD)
+        // ==========================================
+        
+        function renderTeacherDashboard() {
+            document.getElementById('teacherDashboard').style.display = 'block';
+            document.getElementById('studentDashboard').style.display = 'none';
+            document.getElementById('examPage').style.display = 'none';
+            document.getElementById('resultPage').style.display = 'none';
+            
+            document.getElementById('subjectCount').innerText = subjects.length;
+            let subHtml = '';
+            subjects.forEach(sub => {
+                subHtml += `<div class="subject-card">
+                            <div>
+                                <b>📚 ${escapeHtml(sub.name)}</b>
+                                <span class="small">(${sub.questions.length} soal)</span>
+                            </div>
+                            <div>
+                                <button class="btn-small btn-add" onclick="editSubject(${sub.id})">✏️ Edit</button>
+                                <button class="btn-small btn-delete" onclick="deleteSubject(${sub.id})">🗑️ Hapus</button>
+                            </div>
+                           </div>`;
+            });
+            document.getElementById('subjectsTeacherList').innerHTML = subHtml;
+            
+            document.getElementById('studentCount').innerText = students.length;
+            let studentHtml = '';
+            students.forEach(s => {
+                studentHtml += `<tr>
+                                <td>${escapeHtml(s.name)}</td>
+                                <td>${escapeHtml(s.username)}</td>
+                                <td>
+                                    <button class="btn-small btn-add" onclick="generateSingleLoginQR('${s.username}', '${s.password}')">🎟️ QR Login</button>
+                                    <button class="btn-small btn-delete" onclick="deleteStudent('${s.username}')">Hapus</button>
+                                </td>
+                                </tr>`;
+            });
+            document.getElementById('studentsTableBody').innerHTML = studentHtml;
+            
+            refreshCameraLogs();
+        }
+        
+        // ========== TAMBAHAN: GENERATE QR LOGIN ==========
+        function generateSingleLoginQR(username, password) {
+            const loginData = {
+                type: "login",
+                username: username,
+                password: password,
+                timestamp: Date.now()
+            };
+            const jsonStr = JSON.stringify(loginData);
+            const encodedData = btoa(encodeURIComponent(jsonStr));
+            const loginUrl = window.location.href.split('#')[0] + '?autologin=' + encodedData;
+            
+            document.getElementById('qrcode').innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
+                text: loginUrl,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            document.getElementById('shareLinkDisplay').innerHTML = `<a href="${loginUrl}" target="_blank">${loginUrl}</a><br><small class="small">QR untuk login instan siswa: ${username}</small>`;
+            document.getElementById('qrModal').style.display = 'flex';
+        }
+        
+        function openQRLoginMenu() {
+            const container = document.getElementById('qrStudentList');
+            let html = '';
+            students.forEach(s => {
+                html += `<div style="margin:10px 0; padding:10px; background:#f0f0f0; border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                            <span><b>${escapeHtml(s.name)}</b> (${s.username})</span>
+                            <button class="btn-small btn-add" onclick="generateSingleLoginQR('${s.username}', '${s.password}'); closeModal('qrLoginMenuModal');">🎟️ Buat QR Login</button>
+                        </div>`;
+            });
+            container.innerHTML = html;
+            document.getElementById('qrLoginMenuModal').style.display = 'flex';
+        }
+        
+        // ========== TAMBAHAN: QR SCANNER ==========
+        function openQRScanner() {
+            const modal = document.getElementById('qrScannerModal');
+            modal.style.display = 'flex';
+            
+            const scannerContainer = document.getElementById('qr-reader');
+            scannerContainer.innerHTML = "";
+            html5QrCode = new Html5Qrcode("qr-reader");
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedText) => {
+                    html5QrCode.stop();
+                    closeQRScannerModal();
+                    
+                    try {
+                        if (decodedText.includes('autologin=')) {
+                            const encodedData = new URLSearchParams(decodedText.split('?')[1]).get('autologin');
+                            if (encodedData) {
+                                const jsonStr = decodeURIComponent(atob(encodedData));
+                                const loginData = JSON.parse(jsonStr);
+                                if (loginData.type === "login" && loginData.username && loginData.password) {
+                                    performLoginViaQR(loginData.username, loginData.password);
+                                } else {
+                                    alert("QR Code tidak valid!");
+                                }
+                            } else {
+                                alert("QR Code tidak valid!");
+                            }
+                        } else {
+                            alert("QR Code bukan untuk login!");
+                        }
+                    } catch(e) {
+                        console.error("Parse error:", e);
+                        alert("QR Code tidak valid!");
+                    }
+                },
+                (errorMessage) => {
+                    // console.log("QR scan error:", errorMessage);
+                }
+            ).catch(err => {
+                console.error("Gagal start scanner:", err);
+                alert("Gagal mengakses kamera untuk scan QR. Pastikan izinkan kamera!");
+            });
+        }
+        
+        function closeQRScannerModal() {
+            const modal = document.getElementById('qrScannerModal');
+            modal.style.display = 'none';
+            if (html5QrCode) {
+                html5QrCode.stop().catch(e => console.log("Stop scanner error", e));
+            }
+        }
+        
+        function openAddSubjectModal() {
+            document.getElementById('addSubjectModal').style.display = 'flex';
+        }
+        
+        function openAddStudentModal() {
+            document.getElementById('addStudentModal').style.display = 'flex';
+        }
+        
+        function openImportModal() {
+            document.getElementById('importModal').style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function addSubject() {
+            const name = document.getElementById('newSubjectName').value.trim();
+            const questionsText = document.getElementById('newSubjectQuestions').value.trim();
+            
+            if (!name) {
+                alert("Nama mata pelajaran wajib diisi!");
+                return;
+            }
+            
+            let qList = [];
+            if (questionsText) {
+                try {
+                    qList = JSON.parse(questionsText);
+                    if (!Array.isArray(qList)) throw new Error("Harus array");
+                } catch(e) {
+                    alert("Format JSON soal salah!\n" + e.message);
+                    return;
+                }
+            }
+            
+            const newId = subjects.length > 0 ? Math.max(...subjects.map(s => s.id)) + 1 : 11;
+            subjects.push({ id: newId, name: name, questions: qList });
+            localStorage.setItem('subjects', JSON.stringify(subjects));
+            
+            renderTeacherDashboard();
+            closeModal('addSubjectModal');
+            
+            document.getElementById('newSubjectName').value = '';
+            document.getElementById('newSubjectQuestions').value = '';
+            alert("Mata pelajaran berhasil ditambahkan!");
+        }
+        
+        function deleteSubject(id) {
+            if (confirm("⚠️ Yakin ingin menghapus mata pelajaran ini?\nSemua data ujian terkait juga akan terhapus!")) {
+                subjects = subjects.filter(s => s.id !== id);
+                localStorage.setItem('subjects', JSON.stringify(subjects));
+                renderTeacherDashboard();
+                alert("Mata pelajaran berhasil dihapus!");
+            }
+        }
+        
+        function editSubject(id) {
+            const sub = subjects.find(s => s.id === id);
+            if (!sub) return;
+            
+            const newName = prompt("Edit nama mata pelajaran:", sub.name);
+            if (newName && newName.trim()) {
+                sub.name = newName.trim();
+            }
+            
+            const newQuestions = prompt("Edit soal (dalam format JSON):", JSON.stringify(sub.questions, null, 2));
+            if (newQuestions) {
+                try {
+                    sub.questions = JSON.parse(newQuestions);
+                } catch(e) {
+                    alert("Format JSON salah! Soal tidak diubah.");
+                }
+            }
+            
+            localStorage.setItem('subjects', JSON.stringify(subjects));
+            renderTeacherDashboard();
+            alert("Mata pelajaran berhasil diupdate!");
+        }
+        
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const username = document.getElementById('studentUsername').value.trim();
+            const password = document.getElementById('studentPassword').value.trim();
+            
+            if (!name || !username || !password) {
+                alert("Semua field (Nama, Username, Password) harus diisi!");
+                return;
+            }
+            
+            if (students.find(s => s.username === username)) {
+                alert("Username sudah terdaftar! Gunakan username lain.");
+                return;
+            }
+            
+            students.push({ name, username, password });
+            localStorage.setItem('students', JSON.stringify(students));
+            
+            renderTeacherDashboard();
+            closeModal('addStudentModal');
+            
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentUsername').value = '';
+            document.getElementById('studentPassword').value = '';
+            alert(`Siswa ${name} berhasil ditambahkan!`);
+        }
+        
+        function deleteStudent(username) {
+            if (confirm(`Hapus siswa dengan username "${username}"?`)) {
+                students = students.filter(s => s.username !== username);
+                localStorage.setItem('students', JSON.stringify(students));
+                renderTeacherDashboard();
+                alert("Siswa berhasil dihapus!");
+            }
+        }
+        
+        // ==========================================
+        // FUNGSI EXPORT & IMPORT DATA
+        // ==========================================
+        
+        function exportAllCSV() {
+            let csv = "\uFEFFUsername,Nama,Mapel,Nilai,Total,Persen,Tanggal\n";
+            examResults.forEach(r => {
+                const persen = Math.round((r.score / r.total) * 100);
+                csv += `"${r.username}","${r.name}","${r.subjectName}",${r.score},${r.total},${persen}%,"${r.date}"\n`;
+            });
+            
+            const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.setAttribute('download', 'hasil_ujian.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+        
+        function exportDatabase() {
+            const data = {
+                subjects: subjects,
+                students: students,
+                examResults: examResults,
+                exportDate: new Date().toISOString()
+            };
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], {type: 'application/json'});
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.setAttribute('download', `cbt_backup_${new Date().toISOString().slice(0,19)}.json`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            alert("Database berhasil diexport!");
+        }
+        
+        function importDatabase() {
+            const file = document.getElementById('importFile').files[0];
+            if (!file) {
+                alert("Pilih file JSON terlebih dahulu!");
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.subjects) {
+                        localStorage.setItem('subjects', JSON.stringify(data.subjects));
+                        subjects = data.subjects;
+                    }
+                    if (data.students) {
+                        localStorage.setItem('students', JSON.stringify(data.students));
+                        students = data.students;
+                    }
+                    if (data.examResults) {
+                        localStorage.setItem('examResults', JSON.stringify(data.examResults));
+                        examResults = data.examResults;
+                    }
+                    alert("✅ Import berhasil! Halaman akan direload.");
+                    location.reload();
+                } catch(err) {
+                    alert("❌ File tidak valid atau rusak!\n" + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // ==========================================
+        // FUNGSI SHARE & QR CODE
+        // ==========================================
+        
+        function generateShareQR() {
+            const dataToShare = {
+                subjects: subjects,
+                students: students
+            };
+            const jsonStr = JSON.stringify(dataToShare);
+            const shareId = 'share_' + Date.now();
+            localStorage.setItem(shareId, jsonStr);
+            setTimeout(() => localStorage.removeItem(shareId), 86400000);
+            
+            const shareUrl = window.location.href.split('#')[0] + '?import=' + shareId;
+            
+            document.getElementById('qrcode').innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
+                text: shareUrl,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            document.getElementById('shareLinkDisplay').innerHTML = `<a href="${shareUrl}" target="_blank">${shareUrl}</a>`;
+            document.getElementById('qrModal').style.display = 'flex';
+        }
+        
+        function copyShareLink() {
+            const dataToShare = {
+                subjects: subjects,
+                students: students
+            };
+            const jsonStr = JSON.stringify(dataToShare);
+            const shareId = 'share_' + Date.now();
+            localStorage.setItem(shareId, jsonStr);
+            setTimeout(() => localStorage.removeItem(shareId), 86400000);
+            const shareUrl = window.location.href.split('#')[0] + '?import=' + shareId;
+            
+            navigator.clipboard.writeText(shareUrl);
+            alert("🔗 Link berhasil disalin!\nKirimkan ke teman untuk import data.");
+        }
+        
+        function shareViaWA() {
+            const dataToShare = {
+                subjects: subjects,
+                students: students
+            };
+            const jsonStr = JSON.stringify(dataToShare);
+            const shareId = 'share_' + Date.now();
+            localStorage.setItem(shareId, jsonStr);
+            setTimeout(() => localStorage.removeItem(shareId), 86400000);
+            const shareUrl = window.location.href.split('#')[0] + '?import=' + shareId;
+            
+            const text = `📱 *Import Data CBT*\n\nKlik link berikut untuk mengimpor data ujian:\n${shareUrl}\n\n*Sistem Ujian CBT XI TJKT 2*`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+        
+        function shareViaTwitter() {
+            const dataToShare = {
+                subjects: subjects,
+                students: students
+            };
+            const jsonStr = JSON.stringify(dataToShare);
+            const shareId = 'share_' + Date.now();
+            localStorage.setItem(shareId, jsonStr);
+            setTimeout(() => localStorage.removeItem(shareId), 86400000);
+            const shareUrl = window.location.href.split('#')[0] + '?import=' + shareId;
+            
+            window.open(`https://twitter.com/intent/tweet?text=Import%20data%20CBT%3A%20${encodeURIComponent(shareUrl)}`, '_blank');
+        }
+        
+        function closeQRModal() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+        
+        // ==========================================
+        // FUNGSI KAMERA
+        // ==========================================
+        
+        async function requestCameraPermission() {
+            try {
+                const statusDiv = document.getElementById('cameraStatus');
+                if (statusDiv) statusDiv.innerHTML = "📷 Meminta izin kamera...";
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                }
+                cameraStream = stream;
+                videoElement = document.getElementById('video');
+                if (videoElement) {
+                    videoElement.srcObject = stream;
+                    videoElement.style.display = 'block';
+                }
+                
+                const startBtn = document.getElementById('startCameraBtn');
+                if (startBtn) startBtn.style.display = 'none';
+                if (statusDiv) statusDiv.innerHTML = "✅ Kamera aktif - akan difoto setiap 30 detik";
+                
+                isCameraReady = true;
+                return true;
+            } catch(err) {
+                console.error("Kamera error:", err);
+                const statusDiv = document.getElementById('cameraStatus');
+                if (statusDiv) statusDiv.innerHTML = "❌ Gagal mengakses kamera. Pastikan izinkan kamera!";
+                alert("⚠️ Izin kamera diperlukan! Buka pengaturan browser dan izinkan kamera.");
+                isCameraReady = false;
+                return false;
+            }
+        }
+        
+        function stopCamera() {
+            if (cameraInterval) {
+                clearInterval(cameraInterval);
+                cameraInterval = null;
+            }
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            isCameraReady = false;
+        }
+        
+        function takePhoto() {
+            if (!videoElement || !videoElement.videoWidth || !isCameraReady) return null;
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            
+            ctx.font = "14px Arial";
+            ctx.fillStyle = "white";
+            ctx.shadowColor = "black";
+            ctx.fillText(new Date().toLocaleString('id-ID'), 10, 30);
+            ctx.fillText(currentUser?.name || "", 10, 55);
+            
+            return canvas.toDataURL('image/jpeg', 0.7);
+        }
+        
+        function captureAndSave(reason = "Otomatis") {
+            const photoData = takePhoto();
+            if (photoData && currentUser && currentSubject && isCameraReady) {
+                let cameraPhotos = JSON.parse(localStorage.getItem('cameraPhotos') || '[]');
+                const photoRecord = {
+                    id: Date.now(),
+                    siswa: currentUser.username,
+                    namaSiswa: currentUser.name,
+                    mapel: currentSubject.name,
+                    waktu: new Date().toISOString(),
+                    reason: reason,
+                    image: photoData
+                };
+                cameraPhotos.push(photoRecord);
+                if (cameraPhotos.length > 100) cameraPhotos.shift();
+                localStorage.setItem('cameraPhotos', JSON.stringify(cameraPhotos));
+                console.log("📸 Foto tersimpan:", reason);
+            }
+        }
+        
+        function startCameraCapture() {
+            if (cameraInterval) clearInterval(cameraInterval);
+            setTimeout(() => captureAndSave("Mulai ujian"), 2000);
+            cameraInterval = setInterval(() => {
+                const examPage = document.getElementById('examPage');
+                if (currentSubject && examPage && examPage.style.display !== 'none' && isCameraReady) {
+                    captureAndSave("Otomatis 30 detik");
+                }
+            }, 30000);
+        }
+        
+        function refreshCameraLogs() {
+            const photos = JSON.parse(localStorage.getItem('cameraPhotos') || '[]');
+            const container = document.getElementById('cameraLogsContainer');
+            if (!container) return;
+            
+            if (!photos.length) {
+                container.innerHTML = '<p class="small">Belum ada foto dari siswa</p>';
+                return;
+            }
+            
+            const bySiswa = {};
+            photos.forEach(p => {
+                if (!bySiswa[p.siswa]) bySiswa[p.siswa] = [];
+                bySiswa[p.siswa].push(p);
+            });
+            
+            let html = '';
+            for (let siswa in bySiswa) {
+                html += `<details>
+                            <summary><b>📹 ${siswa}</b> (${bySiswa[siswa].length} foto)</summary>
+                            <div class="photo-grid">`;
+                bySiswa[siswa].slice(-20).reverse().forEach(p => {
+                    html += `<div class="photo-item">
+                                <img src="${p.image}" onclick="showPhoto('${p.image}')">
+                                <div class="small">${new Date(p.waktu).toLocaleString('id-ID')}<br>${p.mapel}<br>${p.reason}</div>
+                            </div>`;
+                });
+                html += `</div></details>`;
+            }
+            container.innerHTML = html;
+        }
+        
+        function showPhoto(imgSrc) {
+            const modalImg = document.getElementById('modalCameraImg');
+            if (modalImg) modalImg.src = imgSrc;
+            const modal = document.getElementById('cameraModal');
+            if (modal) modal.style.display = 'flex';
+        }
+        
+        function closeCameraModal() {
+            const modal = document.getElementById('cameraModal');
+            if (modal) modal.style.display = 'none';
+        }
+        
+        // ==========================================
+        // UTILITY FUNCTIONS
+        // ==========================================
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+        
+        // Auto import & auto login
+        (function checkUrlForImportAndLogin() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            const autoLoginData = urlParams.get('autologin');
+            if (autoLoginData) {
+                try {
+                    const jsonStr = decodeURIComponent(atob(autoLoginData));
+                    const loginData = JSON.parse(jsonStr);
+                    if (loginData.type === "login" && loginData.username && loginData.password) {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        setTimeout(() => {
+                            performLoginViaQR(loginData.username, loginData.password);
+                        }, 1000);
+                    }
+                } catch(e) {
+                    console.log("Auto login failed", e);
+                }
+            }
+            
+            const importId = urlParams.get('import');
+            if (importId && importId.startsWith('share_')) {
+                const data = localStorage.getItem(importId);
+                if (data) {
+                    try {
+                        const imported = JSON.parse(data);
+                        if (imported.subjects) {
+                            localStorage.setItem('subjects', JSON.stringify(imported.subjects));
+                            subjects = imported.subjects;
+                        }
+                        if (imported.students) {
+                            localStorage.setItem('students', JSON.stringify(imported.students));
+                            students = imported.students;
+                        }
+                        alert("✅ Data berhasil diimpor dari link!\nHalaman akan direload.");
+                        localStorage.removeItem(importId);
+                        window.location.href = window.location.href.split('?')[0];
+                    } catch(e) {
+                        console.log("Auto import failed", e);
+                    }
+                }
+            }
+        })();
+        
+        console.log("Sistem CBT Ujian Harian siap digunakan!");
+        console.log("Fitur anti-cheat suara aktif!");
+        console.log("Fitur kamera pengawasan aktif!");
+        console.log("Fitur QR Login aktif!");
+    </script>
 </body>
 </html>
